@@ -20,14 +20,14 @@ A MobileGestalt editor for iPhone and iPad. Developed by [huamidev](https://gith
 | Display | Dynamic Island capability and layout, Always-On Display, AOD Vibrancy, Liquid Glass low-power rendering |
 | Device | Model name, boot/shutdown chime, charge limit, tap to wake, Camera Control settings, Action Button settings |
 | iPad | Apple Pencil settings, Stage Manager capability, iPad app compatibility |
-| Intelligence | Apple Intelligence capability flag and sales-region options |
+| Intelligence | Apple Intelligence capability flag and sales-region options, including activation attempts on China-mainland devices |
 | Advanced | Apple internal feature flags, internal storage view, Security Research Device flag |
 | Field editor | Read, search, add, edit, and remove `CacheExtra` fields; local plist import/export; String, Integer, Real, Boolean, Data, Date, Array, and Dictionary values |
 | Changes | Automatic reading and manual re-read, staged before/after review, verified writes |
 | Backups | Automatic and manual backups; open, export, restore, and delete |
 | Logs & respring | Actual exploit-stage logs and manual NeoSpring respring |
 
-Presets modify capability flags; actual effects depend on the device and OS.
+Presets modify capability flags; actual effects depend on the device and OS. China-mainland devices can use the Apple Intelligence and region options to attempt activation; availability also depends on the model, OS version, and Apple services.
 
 Back up your device before making changes. Incorrect MobileGestalt values can cause system instability or require a device restore.
 

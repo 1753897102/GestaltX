@@ -39,9 +39,12 @@ struct AboutView: View {
             Section {
                 NavigationLink { CreditsView() } label: { Label(L("Credits & Licenses"), systemImage: "text.book.closed") }
             } footer: {
-                aboutFooter.padding(.top, 24)
+                aboutFooter.padding(.top, 8)
             }
-        }.navigationTitle(L("About"))
+        }
+        .listSectionSpacing(20)
+        .safeAreaPadding(.bottom, 20)
+        .navigationTitle(L("About"))
     }
 
     private var aboutFooter: some View {
@@ -57,7 +60,7 @@ struct AboutView: View {
         .font(.caption)
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
+        .padding(.vertical, 8)
     }
 }
 
