@@ -1,0 +1,54 @@
+# GestaltX
+
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/huami1314/GestaltX)
+[![Platform](https://img.shields.io/badge/iOS-26.0%2B-black?logo=apple)](#compatibility)
+[![SwiftUI](https://img.shields.io/badge/Swift-SwiftUI-orange?logo=swift)](https://github.com/huami1314/GestaltX)
+[![License](https://img.shields.io/badge/license-GPLv3-blue)](LICENSE)
+
+[English](README.md) · [简体中文](README_ZH-CN.md)
+
+A MobileGestalt editor for iPhone and iPad. Developed by [huamidev](https://github.com/huami1314).
+
+## Features
+
+| Category | Presets and tools |
+| --- | --- |
+| Display | Dynamic Island capability and layout, Always-On Display, AOD Vibrancy, Liquid Glass low-power rendering |
+| Device | Model name, boot/shutdown chime, charge limit, tap to wake, Camera Control settings, Action Button settings |
+| iPad | Apple Pencil settings, Stage Manager capability, iPad app compatibility |
+| Intelligence | Apple Intelligence capability flag and sales-region options |
+| Advanced | Apple internal feature flags, internal storage view, Security Research Device flag |
+| Field editor | Read, search, add, edit, and remove `CacheExtra` fields; local plist import/export; String, Integer, Real, Boolean, Data, Date, Array, and Dictionary values |
+| Changes | Automatic reading and manual re-read, staged before/after review, verified writes |
+| Backups | Automatic and manual backups; open, export, restore, and delete |
+| Logs & respring | Actual exploit-stage logs and manual NeoSpring respring |
+
+Presets modify capability flags; actual effects depend on the device and OS.
+
+Back up your device before making changes. Incorrect MobileGestalt values can cause system instability or require a device restore.
+
+## Compatibility
+
+The app requires iOS / iPadOS 26.0 or later. [worse_query](https://github.com/forcequitOS/worse_query) lists iOS 26.0–26.7.2 / 27.2, but its `SystemGroup` access is listed for iOS 27; live MobileGestalt access is checked on the device, and local plist editing remains available when live access is unavailable.
+
+Signing requires a certificate and provisioning profile with at least one usable App Group. GestaltX detects the signed App Group at runtime.
+
+## Languages
+
+English · 简体中文 · 繁體中文（台灣）· 繁體中文（香港）· Tiếng Việt · Русский · فارسی
+
+## Credits
+
+- [forcequitOS / Taj C — worse_query](https://github.com/forcequitOS/worse_query)
+- [neonmodder123](https://github.com/neonmodder123)
+- [skadz108](https://github.com/skadz108)
+- [rooootdev — NeoSpring](https://github.com/rooootdev/neospring)
+- [Nouvborne — Ketamine](https://github.com/Nouvborne/Ketamine)
+- [PoomSmart — MGKeys](https://github.com/PoomSmart/MGKeys)
+- [leminlimez — Nugget](https://github.com/leminlimez/Nugget)
+- [rooootdev — mond](https://github.com/rooootdev/mond)
+- [frs0n — GestaltEdit](https://github.com/frs0n/GestaltEdit)
+
+## License
+
+[GNU GPL v3](LICENSE) · Copyright © 2026 huamidev.

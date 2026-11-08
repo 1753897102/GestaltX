@@ -1,0 +1,286 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 huamidev
+import Foundation
+import CoreFoundation
+
+struct GestaltFailure: LocalizedError, Sendable {
+    let key: String
+    var errorDescription: String? { NSLocalizedString(key, comment: "") }
+    init(_ key: String) { self.key = key }
+}
+
+enum PlistValueKind: String, CaseIterable, Identifiable, Sendable {
+    case string = "String", integer = "Integer", real = "Real", boolean = "Boolean"
+    case data = "Data", array = "Array", dictionary = "Dictionary", date = "Date"
+    var id: String { rawValue }
+
+    static func detect(_ value: Any) -> Self {
+        if let number = value as? NSNumber {
+            if CFGetTypeID(number) == CFBooleanGetTypeID() { return .boolean }
+            return CFNumberIsFloatType(unsafeBitCast(number, to: CFNumber.self)) ? .real : .integer
+        }
+        if value is Date { return .date }
+        if value is Data { return .data }
+        if value is [String: Any] { return .dictionary }
+        if value is [Any] { return .array }
+        return .string
+    }
+
+    func parse(_ text: String) throws -> Any {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        switch self {
+        case .string: return text
+        case .integer:
+            guard let value = Int64(trimmed) else { throw GestaltFailure("Enter a valid whole number.") }
+            return NSNumber(value: value)
+        case .real:
+            guard let value = Double(trimmed), value.isFinite else { throw GestaltFailure("Enter a finite decimal number.") }
+            return NSNumber(value: value)
+        case .boolean:
+            switch trimmed.lowercased() {
+            case "true", "1": return NSNumber(value: true)
+            case "false", "0": return NSNumber(value: false)
+            default: throw GestaltFailure("Use true or false for a Boolean value.")
+            }
+        case .date:
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            if let value = formatter.date(from: trimmed) { return value }
+            formatter.formatOptions = [.withInternetDateTime]
+            guard let value = formatter.date(from: trimmed) else { throw GestaltFailure("Enter an ISO 8601 date, such as 2026-11-09T12:00:00Z.") }
+            return value
+        case .data:
+            guard let value = Data(base64Encoded: trimmed.filter { !$0.isWhitespace }) else { throw GestaltFailure("Enter valid Base64 data.") }
+            return value
+        case .array, .dictionary:
+            // An XML plist fragment preserves nested Data, Boolean and integer types.
+            let xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><plist version=\"1.0\">\(text)</plist>"
+            guard let value = try? PropertyListSerialization.propertyList(from: Data(xml.utf8), options: [], format: nil),
+                  (self == .array && value is [Any]) || (self == .dictionary && value is [String: Any]) else {
+                throw GestaltFailure("Enter an XML plist array or dictionary fragment.")
+            }
+            return value
+        }
+    }
+
+    func text(for value: Any) -> String {
+        switch self {
+        case .boolean: return (value as? NSNumber)?.boolValue == true ? "true" : "false"
+        case .date: return (value as? Date).map { ISO8601DateFormatter().string(from: $0) } ?? ""
+        case .data: return (value as? Data)?.base64EncodedString() ?? ""
+        case .array, .dictionary:
+            guard let data = try? PropertyListSerialization.data(fromPropertyList: value, format: .xml, options: 0),
+                  let xml = String(data: data, encoding: .utf8),
+                  let start = xml.range(of: "<plist version=\"1.0\">"),
+                  let end = xml.range(of: "</plist>", options: .backwards) else { return "" }
+            return String(xml[start.upperBound..<end.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
+        default: return String(describing: value)
+        }
+    }
+}
+
+enum GestaltKeys {
+    static let group = "group.com.huami.gestultx" // Keep the existing provisioned App Group.
+    static let devicePath = "/private/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"
+    static let artwork = "oPeik/9e8lQWMszEjbPzng"
+    static let regionCode = "h63QSdBCiT/z0WU6rdQv6Q"
+    static let regionInfo = "zHeENZu+wbg7PUprwNwBWg"
+    static let legacyRegionInfo = "yK+xavymRGZ3xWc1tb8XDg"
+    static let productType = "h9jDsbgj7xIVeIQ8S3/X3Q"
+}
+
+struct GestaltDocument: @unchecked Sendable {
+    private(set) var root: [String: Any]
+    var extra: [String: Any] { root["CacheExtra"] as? [String: Any] ?? [:] }
+    var artwork: [String: Any] { extra[GestaltKeys.artwork] as? [String: Any] ?? [:] }
+
+    init(data: Data) throws {
+        guard let root = try PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any],
+              root["CacheExtra"] is [String: Any] else { throw GestaltFailure("Choose a MobileGestalt plist with a CacheExtra dictionary.") }
+        self.root = root
+    }
+
+    mutating func set(_ value: Any?, for key: String) {
+        var updated = extra
+        updated[key] = value
+        root["CacheExtra"] = updated
+    }
+
+    mutating func setArtwork(_ value: Any, for key: String) {
+        // Never replace an existing malformed artwork value and silently lose its data.
+        var updated = artwork
+        updated[key] = value
+        set(updated, for: GestaltKeys.artwork)
+    }
+
+    func encoded() throws -> Data {
+        guard PropertyListSerialization.propertyList(root, isValidFor: .binary) else { throw GestaltFailure("The edited document is not a valid property list.") }
+        return try PropertyListSerialization.data(fromPropertyList: root, format: .binary, options: 0)
+    }
+
+    static func valuesEqual(_ a: Any, _ b: Any) -> Bool {
+        let kind = PlistValueKind.detect(a)
+        guard kind == PlistValueKind.detect(b) else { return false }
+        switch kind {
+        case .dictionary:
+            guard let left = a as? [String: Any], let right = b as? [String: Any], Set(left.keys) == Set(right.keys) else { return false }
+            return left.allSatisfy { key, value in right[key].map { valuesEqual(value, $0) } ?? false }
+        case .array:
+            guard let left = a as? [Any], let right = b as? [Any], left.count == right.count else { return false }
+            return zip(left, right).allSatisfy { valuesEqual($0.0, $0.1) }
+        case .integer: return (a as? NSNumber)?.int64Value == (b as? NSNumber)?.int64Value
+        case .real: return (a as? NSNumber)?.doubleValue == (b as? NSNumber)?.doubleValue
+        case .boolean: return (a as? NSNumber)?.boolValue == (b as? NSNumber)?.boolValue
+        case .data: return (a as? Data) == (b as? Data)
+        case .date: return (a as? Date) == (b as? Date)
+        case .string: return (a as? String) == (b as? String)
+        }
+    }
+    func matches(_ other: Self) -> Bool { Self.valuesEqual(root, other.root) }
+
+    func matchesIdentity(_ other: Self) -> Bool {
+        let identityKeys = ["re6Zb+zwFKJNlkQTUeT+/w", "VasUgeSzVyHdB27g2XpN0g"]
+        for key in identityKeys {
+            if let a = extra[key] as? String, let b = other.extra[key] as? String, a != b { return false }
+        }
+        return true
+    }
+}
+
+enum DocumentSource: String, Codable, Sendable { case device, local }
+struct DocumentSnapshot: @unchecked Sendable {
+    let data: Data
+    let document: GestaltDocument
+    let source: DocumentSource
+    let name: String
+}
+struct BackupRecord: Identifiable, Codable, Sendable {
+    let id: UUID
+    let date: Date
+    let reason: String
+    let source: DocumentSource
+    let deviceID: String
+    let byteCount: Int
+    var filename: String { id.uuidString + ".plist" }
+}
+
+actor GestaltFileStore {
+    private let deviceURL: URL
+    private let backupDirectory: URL
+    private let deviceID: String
+    private let acquire: @Sendable () throws -> Int64
+    private let release: @Sendable (Int64) -> Void
+    private let writeData: @Sendable (Data, URL) throws -> Void
+    private let eventSink: @Sendable (String) -> Void
+
+    init(deviceURL: URL, backupDirectory: URL, deviceID: String,
+         acquire: @escaping @Sendable () throws -> Int64,
+         release: @escaping @Sendable (Int64) -> Void,
+         writeData: @escaping @Sendable (Data, URL) throws -> Void = { try $0.write(to: $1) },
+         eventSink: @escaping @Sendable (String) -> Void = { _ in }) {
+        self.deviceURL = deviceURL; self.backupDirectory = backupDirectory; self.deviceID = deviceID
+        self.acquire = acquire; self.release = release; self.writeData = writeData; self.eventSink = eventSink
+    }
+
+    private func withAccess<T>(_ operation: () throws -> T) throws -> T {
+        eventSink("Access: requesting sandbox extension")
+        let handle = try acquire()
+        guard handle >= 0 else { throw GestaltFailure("MobileGestalt access was denied. Check the OS version and App Group signing.") }
+        defer { release(handle); eventSink("Access: extension scope ended") }
+        do { return try operation() }
+        catch { eventSink("Access operation failed: " + error.localizedDescription); throw error }
+    }
+
+    func loadDevice() throws -> DocumentSnapshot {
+        try withAccess {
+            let data = try Data(contentsOf: deviceURL)
+            eventSink("Read: \(data.count) bytes; validating plist")
+            return DocumentSnapshot(data: data, document: try GestaltDocument(data: data), source: .device, name: "MobileGestalt")
+        }
+    }
+
+    func loadLocal(data: Data, name: String) throws -> DocumentSnapshot {
+        DocumentSnapshot(data: data, document: try GestaltDocument(data: data), source: .local, name: name)
+    }
+
+    func backups() throws -> [BackupRecord] {
+        guard FileManager.default.fileExists(atPath: backupDirectory.path) else { return [] }
+        return try FileManager.default.contentsOfDirectory(at: backupDirectory, includingPropertiesForKeys: nil)
+            .filter { $0.pathExtension == "json" }
+            .compactMap { url -> BackupRecord? in
+                guard let record = try? JSONDecoder().decode(BackupRecord.self, from: Data(contentsOf: url)),
+                      FileManager.default.fileExists(atPath: backupDirectory.appendingPathComponent(record.filename).path) else { return nil }
+                return record
+            }.sorted { $0.date > $1.date }
+    }
+
+    @discardableResult
+    private func saveBackup(_ data: Data, source: DocumentSource, reason: String) throws -> BackupRecord {
+        _ = try GestaltDocument(data: data)
+        try FileManager.default.createDirectory(at: backupDirectory, withIntermediateDirectories: true)
+        let record = BackupRecord(id: UUID(), date: Date(), reason: reason, source: source, deviceID: deviceID, byteCount: data.count)
+        let url = backupDirectory.appendingPathComponent(record.filename)
+        try data.write(to: url, options: .atomic)
+        // A failed backup must stop a write. Verify the backup before creating its metadata.
+        guard try Data(contentsOf: url) == data else { throw GestaltFailure("The backup could not be verified. No system write was started.") }
+        try JSONEncoder().encode(record).write(to: backupDirectory.appendingPathComponent(record.id.uuidString + ".json"), options: .atomic)
+        eventSink("Backup: \(data.count) bytes saved and verified")
+        return record
+    }
+
+    func backup(_ snapshot: DocumentSnapshot) throws {
+        if snapshot.source == .device {
+            _ = try withAccess { try saveBackup(Data(contentsOf: deviceURL), source: .device, reason: "Manual backup") }
+        } else { try saveBackup(snapshot.data, source: .local, reason: "Manual backup") }
+    }
+
+    func backupData(_ record: BackupRecord) throws -> Data {
+        let data = try Data(contentsOf: backupDirectory.appendingPathComponent(record.filename))
+        _ = try GestaltDocument(data: data)
+        return data
+    }
+
+    func deleteBackup(_ record: BackupRecord) throws {
+        try FileManager.default.removeItem(at: backupDirectory.appendingPathComponent(record.id.uuidString + ".json"))
+        try FileManager.default.removeItem(at: backupDirectory.appendingPathComponent(record.filename))
+    }
+
+    func commit(_ edited: GestaltDocument, expected: DocumentSnapshot, restoring record: BackupRecord? = nil) throws -> DocumentSnapshot {
+        let output = try edited.encoded()
+        guard expected.source == .device else {
+            try saveBackup(expected.data, source: .local, reason: "Before editing")
+            return DocumentSnapshot(data: output, document: edited, source: .local, name: expected.name)
+        }
+        if let record {
+            guard record.source == .device, record.deviceID == deviceID, edited.matchesIdentity(expected.document) else {
+                throw GestaltFailure("This backup does not belong to this device. Open it as a local file instead.")
+            }
+        }
+        return try withAccess {
+            let current = try Data(contentsOf: deviceURL)
+            guard current == expected.data else { throw GestaltFailure("MobileGestalt changed since it was loaded. Refresh before applying your edits.") }
+            try saveBackup(current, source: .device, reason: record == nil ? "Before applying" : "Before restoring")
+            guard try Data(contentsOf: deviceURL) == current else { throw GestaltFailure("MobileGestalt changed since it was loaded. Refresh before applying your edits.") }
+            do {
+                // Atomic replacement needs directory-create access which some extensions lack.
+                // Keep the device file's existing inode; backups are already durable.
+                eventSink("Write: \(output.count) bytes")
+                try writeData(output, deviceURL)
+                eventSink("Readback: comparing full plist and value types")
+                let readback = try Data(contentsOf: deviceURL)
+                guard try edited.matches(GestaltDocument(data: readback)) else { throw GestaltFailure("The write did not match the readback.") }
+                eventSink("Readback: verified")
+                return DocumentSnapshot(data: readback, document: edited, source: .device, name: expected.name)
+            } catch {
+                eventSink("Write/readback failed: " + error.localizedDescription)
+                eventSink("Recovery: restoring previous bytes")
+                do {
+                    try current.write(to: deviceURL)
+                    guard try Data(contentsOf: deviceURL) == current else { throw GestaltFailure("The original file could not be restored.") }
+                } catch { throw GestaltFailure("Write verification and recovery failed. Keep the backup and recover the device file before trying again.") }
+                eventSink("Recovery: previous bytes restored and verified")
+                throw GestaltFailure("The write failed. The previous file was restored and verified.")
+            }
+        }
+    }
+}
