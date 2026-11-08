@@ -1,4 +1,8 @@
-# GestaltX
+<p align="center">
+  <img src="GestaltX/Assets.xcassets/AppIcon.appiconset/AppIcon.png" alt="GestaltX" width="112" height="112">
+</p>
+
+<h1 align="center">GestaltX</h1>
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/huami1314/GestaltX)
 [![Platform](https://img.shields.io/badge/iOS-26.0%2B-black?logo=apple)](#兼容性)
@@ -33,9 +37,19 @@
 
 签名所用的证书及描述文件必须提供至少一个可用的 App Group。GestaltX 会在运行时读取实际签名中的 App Group，以兼容重签。
 
-## 语言
+## 语言支持
 
-English · 简体中文 · 繁體中文（台灣）· 繁體中文（香港）· Tiếng Việt · Русский · فارسی
+GestaltX 跟随 iOS 的语言设置，默认及回退语言为英语。波斯语已适配从右向左布局。
+
+| 语言 | 语言代码 |
+| --- | --- |
+| English（英语） | `en` |
+| 简体中文 | `zh-Hans` |
+| 繁體中文（台灣） | `zh-Hant-TW` |
+| 繁體中文（香港） | `zh-Hant-HK` |
+| Tiếng Việt（越南语） | `vi` |
+| Русский（俄语） | `ru` |
+| فارسی（波斯语） | `fa` |
 
 ## 鸣谢
 

@@ -1,4 +1,8 @@
-# GestaltX
+<p align="center">
+  <img src="GestaltX/Assets.xcassets/AppIcon.appiconset/AppIcon.png" alt="GestaltX" width="112" height="112">
+</p>
+
+<h1 align="center">GestaltX</h1>
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/huami1314/GestaltX)
 [![Platform](https://img.shields.io/badge/iOS-26.0%2B-black?logo=apple)](#compatibility)
@@ -33,9 +37,19 @@ The app requires iOS / iPadOS 26.0 or later. [worse_query](https://github.com/fo
 
 Signing requires a certificate and provisioning profile with at least one usable App Group. GestaltX detects the signed App Group at runtime.
 
-## Languages
+## Language support
 
-English · 简体中文 · 繁體中文（台灣）· 繁體中文（香港）· Tiếng Việt · Русский · فارسی
+GestaltX follows your iOS language settings, with English as the default and fallback. Persian includes right-to-left layout support.
+
+| Language | Locale |
+| --- | --- |
+| English | `en` |
+| 简体中文 — Simplified Chinese | `zh-Hans` |
+| 繁體中文（台灣）— Traditional Chinese (Taiwan) | `zh-Hant-TW` |
+| 繁體中文（香港）— Traditional Chinese (Hong Kong) | `zh-Hant-HK` |
+| Tiếng Việt — Vietnamese | `vi` |
+| Русский — Russian | `ru` |
+| فارسی — Persian | `fa` |
 
 ## Credits
 
