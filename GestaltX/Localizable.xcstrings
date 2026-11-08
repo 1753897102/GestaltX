@@ -12007,48 +12007,48 @@
         }
       }
     },
-    "This is the upstream sandbox-escape range. It does not mean every path or MobileGestalt preset works on every build.": {
+    "Available paths and MobileGestalt presets vary by device and OS build.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This is the upstream sandbox-escape range. It does not mean every path or MobileGestalt preset works on every build."
+            "value": "Available paths and MobileGestalt presets vary by device and OS build."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "这是上游沙盒逃逸的版本范围，不代表所有路径或 MobileGestalt 预设均能在每个版本上使用。"
+            "value": "可访问的路径及 MobileGestalt 预设因设备与系统版本而异。"
           }
         },
         "fa": {
           "stringUnit": {
             "state": "translated",
-            "value": "این بازهٔ نسخه‌ها مربوط به خروج از سندباکس در پروژهٔ اصلی است. کارکرد همهٔ مسیرها یا پیش‌تنظیم‌های MobileGestalt در همهٔ نسخه‌ها تضمین نمی‌شود."
+            "value": "مسیرهای قابل دسترسی و پیش‌تنظیم‌های MobileGestalt بسته به دستگاه و نسخهٔ سیستم‌عامل متفاوت‌اند."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Это диапазон версий для выхода из песочницы, заявленный исходным проектом. Он не гарантирует работу всех путей и предустановок MobileGestalt во всех сборках."
+            "value": "Доступные пути и предустановки MobileGestalt зависят от устройства и сборки ОС."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Đây là phạm vi phiên bản khai thác thoát sandbox của dự án gốc. Không phải mọi đường dẫn hoặc thiết lập sẵn MobileGestalt đều hoạt động trên mọi bản hệ điều hành."
+            "value": "Các đường dẫn có thể truy cập và thiết lập sẵn MobileGestalt khác nhau tùy theo thiết bị và bản hệ điều hành."
           }
         },
         "zh-Hant-HK": {
           "stringUnit": {
             "state": "translated",
-            "value": "這是上游沙盒逃逸的版本範圍，不代表所有路徑或 MobileGestalt 預設均能在每個版本上使用。"
+            "value": "可存取的路徑及 MobileGestalt 預設因裝置與系統版本而異。"
           }
         },
         "zh-Hant-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "這是上游沙盒逃逸的版本範圍，不代表所有路徑或 MobileGestalt 預設均能在每個版本上使用。"
+            "value": "可存取的路徑及 MobileGestalt 預設因裝置與系統版本而異。"
           }
         }
       }

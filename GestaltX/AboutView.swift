@@ -93,8 +93,8 @@ struct CompatibilityView: View {
     var body: some View {
         List {
             Section(L("worse_query")) {
-                Text("iOS 26.0–26.7.2 / 27.2").font(.headline)
-                Text(L("This is the upstream sandbox-escape range. It does not mean every path or MobileGestalt preset works on every build."))
+                Text(VersionSupport.range).font(.headline)
+                Text(L("Available paths and MobileGestalt presets vary by device and OS build."))
                     .font(.subheadline).foregroundStyle(.secondary)
                 Link(L("Read Upstream Compatibility"), destination: URL(string: "https://github.com/forcequitOS/worse_query")!)
             }

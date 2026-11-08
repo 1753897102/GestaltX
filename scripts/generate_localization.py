@@ -269,7 +269,7 @@ Open Source	开源许可
 Third-Party Notices	第三方声明
 GestaltX is independent software. It is not affiliated with Apple or the credited projects.	GestaltX 是独立软件，与 Apple 及鸣谢项目没有隶属关系。
 worse_query	worse_query
-This is the upstream sandbox-escape range. It does not mean every path or MobileGestalt preset works on every build.	这是上游沙盒逃逸的版本范围，不代表所有路径或 MobileGestalt 预设均能在每个版本上使用。
+Available paths and MobileGestalt presets vary by device and OS build.	可访问的路径及 MobileGestalt 预设因设备与系统版本而异。
 Read Upstream Compatibility	查看上游兼容性说明
 MobileGestalt Access	MobileGestalt 访问
 iOS 27: access is checked on the device.	iOS 27：通过本机实际探测访问权限。

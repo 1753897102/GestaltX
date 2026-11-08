@@ -260,7 +260,7 @@
   "Third-Party Notices": "Уведомления о сторонних компонентах",
   "GestaltX is independent software. It is not affiliated with Apple or the credited projects.": "GestaltX — независимое ПО, не связанное с Apple или указанными проектами.",
   "worse_query": "worse_query",
-  "This is the upstream sandbox-escape range. It does not mean every path or MobileGestalt preset works on every build.": "Это диапазон версий для выхода из песочницы, заявленный исходным проектом. Он не гарантирует работу всех путей и предустановок MobileGestalt во всех сборках.",
+  "Available paths and MobileGestalt presets vary by device and OS build.": "Доступные пути и предустановки MobileGestalt зависят от устройства и сборки ОС.",
   "Read Upstream Compatibility": "Совместимость исходного проекта",
   "MobileGestalt Access": "Доступ к MobileGestalt",
   "iOS 27: access is checked on the device.": "iOS 27: доступ проверяется на устройстве.",

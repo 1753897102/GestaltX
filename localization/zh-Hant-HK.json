@@ -260,7 +260,7 @@
   "Third-Party Notices": "第三方聲明",
   "GestaltX is independent software. It is not affiliated with Apple or the credited projects.": "GestaltX 是獨立軟件，與 Apple 及鳴謝項目沒有隸屬關係。",
   "worse_query": "worse_query",
-  "This is the upstream sandbox-escape range. It does not mean every path or MobileGestalt preset works on every build.": "這是上游沙盒逃逸的版本範圍，不代表所有路徑或 MobileGestalt 預設均能在每個版本上使用。",
+  "Available paths and MobileGestalt presets vary by device and OS build.": "可存取的路徑及 MobileGestalt 預設因裝置與系統版本而異。",
   "Read Upstream Compatibility": "查看上游兼容性説明",
   "MobileGestalt Access": "MobileGestalt 訪問",
   "iOS 27: access is checked on the device.": "iOS 27：通過本機實際探測訪問權限。",
