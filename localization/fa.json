@@ -272,5 +272,9 @@
   "Respring did not finish.": "ری‌اسپرینگ کامل نشد.",
   "Refreshing SpringBoard…": "در حال تازه‌سازی SpringBoard…",
   "This OS build may not support the technique. You can close this screen and try a manual restart later.": "ممکن است این نسخهٔ سیستم‌عامل از این روش پشتیبانی نکند. می‌توانید این صفحه را ببندید و بعداً دستگاه را به‌صورت دستی دوباره راه‌اندازی کنید.",
-  "Your device may briefly return to the Lock Screen.": "ممکن است دستگاه برای لحظاتی به صفحهٔ قفل برگردد."
+  "Your device may briefly return to the Lock Screen.": "ممکن است دستگاه برای لحظاتی به صفحهٔ قفل برگردد.",
+  "Region Code": "کد منطقه",
+  "Usually, changing the region code is enough. There is no need to change Sales Region.": "معمولاً تغییر کد منطقه کافی است. نیازی به تغییر منطقهٔ فروش نیست.",
+  "* If you previously changed Sales Region, restore your device's original sales region and apply it first.": "* اگر قبلاً منطقهٔ فروش را تغییر داده‌اید، ابتدا منطقهٔ فروش اصلی دستگاه را بازگردانید و تغییر را اعمال کنید.",
+  "Changing the sales-region suffix may cause verification tools to report a mismatch with factory information.": "تغییر پسوند منطقهٔ فروش ممکن است باعث شود ابزارهای بررسی، عدم تطابق با اطلاعات کارخانه را گزارش کنند."
 }

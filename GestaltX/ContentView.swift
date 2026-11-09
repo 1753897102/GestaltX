@@ -14,6 +14,9 @@ struct ContentView: View {
     @State private var selectedTab = 0
     @State private var didStart = false
     @State private var didAutoRead = false
+    #if targetEnvironment(simulator)
+    @State private var previewCategory: CapabilityCategory?
+    #endif
     @AppStorage("GestaltX.acceptedWelcome.v1") private var acceptedWelcome = false
     @Environment(\.scenePhase) private var scenePhase
 
@@ -30,6 +33,11 @@ struct ContentView: View {
         }
         .environmentObject(model)
         .tint(.blue)
+        #if targetEnvironment(simulator)
+        .sheet(item: $previewCategory) { category in
+            NavigationStack { CategoryView(category: category) }.environmentObject(model)
+        }
+        #endif
         .fileImporter(isPresented: $importsFile, allowedContentTypes: [.propertyList, .xml, .data]) { result in
             switch result {
             case .success(let url): Task { await model.open(url) }
@@ -70,6 +78,9 @@ struct ContentView: View {
             if arguments.contains("--preview-review") {
                 model.choices["pencil"] = .enable
                 showsChanges = true
+            }
+            if let flag = arguments.firstIndex(of: "--preview-category"), arguments.indices.contains(flag + 1) {
+                previewCategory = CapabilityCategory(rawValue: arguments[flag + 1])
             }
             if arguments.contains("--preview-document") || arguments.contains("--preview-tab") { return }
             #endif
@@ -174,10 +185,24 @@ struct CategoryView: View {
             }
             if category == .intelligence {
                 Section {
-                    Picker(L("Sales Region"), selection: $model.regionID) {
+                    Picker(L("Region Code"), selection: Binding(get: { model.regionCodeID }, set: model.selectRegionCode)) {
+                        Text(L("Keep Current")).tag("keep")
+                        Text(L("United States")).tag("LL")
+                    }
+                    if model.regionCodeID != "keep" { Text(L("A device restart may be required.")).font(.caption).foregroundStyle(.secondary) }
+                } footer: {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(L("Usually, changing the region code is enough. There is no need to change Sales Region."))
+                        Text(L("* If you previously changed Sales Region, restore your device's original sales region and apply it first."))
+                    }
+                }
+                Section {
+                    Picker(L("Sales Region"), selection: Binding(get: { model.regionID }, set: model.selectSalesRegion)) {
                         ForEach(RegionPreset.all) { Text(L($0.title)).tag($0.id) }
                     }
                     if model.regionID != "keep" { Text(L("Restart the device after changing the region.")).font(.caption).foregroundStyle(.secondary) }
+                } footer: {
+                    Text(L("Changing the sales-region suffix may cause verification tools to report a mismatch with factory information."))
                 }
             }
             Section(L("Presets")) {

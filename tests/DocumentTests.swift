@@ -28,6 +28,31 @@ final class AccessTrace: @unchecked Sendable {
             "CacheData": Data([5, 10, 15]), "UnchangedTopLevel": "keep"
         ]
         let originalData = try PropertyListSerialization.data(fromPropertyList: original, format: .binary, options: 0)
+        // A region-code edit must not rewrite or synthesize either sales suffix,
+        // alter the separate AI flag, or touch CacheData and other device fields.
+        for suffixKeys in [[], [GestaltKeys.regionInfo], [GestaltKeys.legacyRegionInfo], [GestaltKeys.regionInfo, GestaltKeys.legacyRegionInfo]] {
+            var fixture = original
+            var extra = fixture["CacheExtra"] as! [String: Any]
+            extra[GestaltKeys.regionCode] = "CH"
+            extra["A62OafQ85EJAiiqKn4agtg"] = NSNumber(value: 1)
+            for key in suffixKeys { extra[key] = "CH/A" }
+            fixture["CacheExtra"] = extra
+            let data = try PropertyListSerialization.data(fromPropertyList: fixture, format: .binary, options: 0)
+            var regionDocument = try GestaltDocument(data: data)
+            regionDocument.applyRegion(code: "LL")
+            extra[GestaltKeys.regionCode] = "LL"
+            var expected = fixture
+            expected["CacheExtra"] = extra
+            try expect(GestaltDocument.valuesEqual(regionDocument.root, expected), "Code-only edit preserves all other fields for each suffix layout")
+            let encoded = try regionDocument.encoded()
+            try expect(try GestaltDocument(data: encoded).matches(regionDocument), "Code-only edit survives plist roundtrip")
+            regionDocument.applyRegion(code: "CH", salesSuffix: "CH/A")
+            try expect(regionDocument.extra[GestaltKeys.regionCode] as? String == "CH", "Sales-region restore resets the region code")
+            let restoredSuffixKeys = suffixKeys.isEmpty ? [GestaltKeys.regionInfo] : suffixKeys
+            for key in restoredSuffixKeys {
+                try expect(regionDocument.extra[key] as? String == "CH/A", "Sales-region restore retains the original suffix")
+            }
+        }
         try originalData.write(to: device)
         let trace = AccessTrace()
         let store = GestaltFileStore(deviceURL: device, backupDirectory: backups, deviceID: "fixture-installation", acquire: {

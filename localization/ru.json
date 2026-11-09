@@ -272,5 +272,9 @@
   "Respring did not finish.": "Респринг не завершился.",
   "Refreshing SpringBoard…": "Обновление SpringBoard…",
   "This OS build may not support the technique. You can close this screen and try a manual restart later.": "Эта сборка ОС может не поддерживать данный метод. Можно закрыть этот экран и позже перезагрузить устройство вручную.",
-  "Your device may briefly return to the Lock Screen.": "Устройство может ненадолго вернуться на экран блокировки."
+  "Your device may briefly return to the Lock Screen.": "Устройство может ненадолго вернуться на экран блокировки.",
+  "Region Code": "Код региона",
+  "Usually, changing the region code is enough. There is no need to change Sales Region.": "Обычно достаточно изменить код региона. Менять регион продажи не нужно.",
+  "* If you previously changed Sales Region, restore your device's original sales region and apply it first.": "* Если вы ранее меняли регион продажи, сначала верните исходный регион продажи устройства и примените изменения.",
+  "Changing the sales-region suffix may cause verification tools to report a mismatch with factory information.": "Изменение суффикса региона продажи может вызвать предупреждение о несовпадении с заводскими данными в программах проверки."
 }

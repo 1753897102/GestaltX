@@ -106,6 +106,14 @@ struct GestaltDocument: @unchecked Sendable {
         root["CacheExtra"] = updated
     }
 
+    mutating func applyRegion(code: String, salesSuffix: String? = nil) {
+        set(code, for: GestaltKeys.regionCode)
+        // A code-only edit must leave both sales-region suffix fields untouched.
+        guard let salesSuffix else { return }
+        let present = [GestaltKeys.regionInfo, GestaltKeys.legacyRegionInfo].filter { extra[$0] != nil }
+        for key in present.isEmpty ? [GestaltKeys.regionInfo] : present { set(salesSuffix, for: key) }
+    }
+
     mutating func setArtwork(_ value: Any, for key: String) {
         // Never replace an existing malformed artwork value and silently lose its data.
         var updated = artwork

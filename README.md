@@ -4,7 +4,7 @@
 
 <h1 align="center">GestaltX</h1>
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/huami1314/GestaltX)
+[![Version](https://img.shields.io/badge/version-1.0.1-blue)](https://github.com/huami1314/GestaltX)
 [![Platform](https://img.shields.io/badge/iOS-27.x-black?logo=apple)](#compatibility)
 [![SwiftUI](https://img.shields.io/badge/Swift-SwiftUI-orange?logo=swift)](https://github.com/huami1314/GestaltX)
 [![License](https://img.shields.io/badge/license-GPLv3-blue)](LICENSE)
@@ -20,12 +20,16 @@ A MobileGestalt editor for iPhone and iPad. Developed by [huamidev](https://gith
 | Display | Dynamic Island capability and layout, Always-On Display, AOD Vibrancy, Liquid Glass low-power rendering |
 | Device | Model name, boot/shutdown chime, charge limit, tap to wake, Camera Control settings, Action Button settings |
 | iPad | Apple Pencil settings, Stage Manager capability, iPad app compatibility |
-| Intelligence | Apple Intelligence capability flag and sales-region options, including activation attempts on China-mainland devices |
+| Intelligence | Independent region-code option (LL), Apple Intelligence capability flag, and sales-region options for activation attempts on China-mainland devices |
 | Advanced | Apple internal feature flags, internal storage view, Security Research Device flag |
 | Field editor | Read, search, add, edit, and remove `CacheExtra` fields; local plist import/export; String, Integer, Real, Boolean, Data, Date, Array, and Dictionary values |
 | Changes | Automatic reading and manual re-read, staged before/after review, verified writes |
 | Backups | Automatic and manual backups; open, export, restore, and delete |
 | Logs & respring | Actual exploit-stage logs and manual NeoSpring respring |
+
+Usually, changing the region code is enough to try enabling AI; there is no need to change Sales Region. The region-code option only sets `RegionCode` to `LL` and keeps the sales-region suffix.
+
+*If you previously changed Sales Region, restore your device’s original sales region and apply it first.*
 
 Presets modify capability flags; actual effects depend on the device and OS. China-mainland devices can use the Apple Intelligence and region options to attempt activation; availability also depends on the model, OS version, and Apple services.
 

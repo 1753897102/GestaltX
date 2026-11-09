@@ -116,6 +116,10 @@ Device Identity	设备标识
 Change Model Name	更改机型名称
 Model Name	机型名称
 Sales Region	销售地区
+Region Code	地区代码
+Usually, changing the region code is enough. There is no need to change Sales Region.	通常只需修改地区代码，无需更改销售地区。
+* If you previously changed Sales Region, restore your device's original sales region and apply it first.	* 之前修改过销售地区的用户，请先改回设备原本的销售地区并应用。
+Changing the sales-region suffix may cause verification tools to report a mismatch with factory information.	更改销售地区后缀可能导致验机工具提示与出厂信息不匹配。
 Changing a region flag does not guarantee Apple Intelligence or region-restricted services.	更改地区标记并不保证可用 Apple 智能或受地区限制的服务。
 Experimental	实验性
 Presets	预设

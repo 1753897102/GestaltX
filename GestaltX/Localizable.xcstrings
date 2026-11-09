@@ -4969,6 +4969,190 @@
         }
       }
     },
+    "Region Code": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Region Code"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "地区代码"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "کد منطقه"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Код региона"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mã vùng"
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "地區代碼"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "地區代碼"
+          }
+        }
+      }
+    },
+    "Usually, changing the region code is enough. There is no need to change Sales Region.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usually, changing the region code is enough. There is no need to change Sales Region."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通常只需修改地区代码，无需更改销售地区。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "معمولاً تغییر کد منطقه کافی است. نیازی به تغییر منطقهٔ فروش نیست."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обычно достаточно изменить код региона. Менять регион продажи не нужно."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thông thường, chỉ cần thay đổi mã vùng. Không cần đổi khu vực bán hàng."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通常只需修改地區代碼，毋須更改銷售地區。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通常只需修改地區代碼，無需變更銷售地區。"
+          }
+        }
+      }
+    },
+    "* If you previously changed Sales Region, restore your device's original sales region and apply it first.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "* If you previously changed Sales Region, restore your device's original sales region and apply it first."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "* 之前修改过销售地区的用户，请先改回设备原本的销售地区并应用。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "* اگر قبلاً منطقهٔ فروش را تغییر داده‌اید، ابتدا منطقهٔ فروش اصلی دستگاه را بازگردانید و تغییر را اعمال کنید."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "* Если вы ранее меняли регион продажи, сначала верните исходный регион продажи устройства и примените изменения."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "* Nếu trước đây bạn đã đổi khu vực bán hàng, hãy khôi phục khu vực bán hàng ban đầu của thiết bị và áp dụng trước."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "* 之前修改過銷售地區的用戶，請先改回裝置原本的銷售地區並套用。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "* 先前修改過銷售地區的使用者，請先改回裝置原本的銷售地區並套用。"
+          }
+        }
+      }
+    },
+    "Changing the sales-region suffix may cause verification tools to report a mismatch with factory information.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changing the sales-region suffix may cause verification tools to report a mismatch with factory information."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更改销售地区后缀可能导致验机工具提示与出厂信息不匹配。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تغییر پسوند منطقهٔ فروش ممکن است باعث شود ابزارهای بررسی، عدم تطابق با اطلاعات کارخانه را گزارش کنند."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Изменение суффикса региона продажи может вызвать предупреждение о несовпадении с заводскими данными в программах проверки."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thay đổi hậu tố khu vực bán hàng có thể khiến công cụ kiểm tra báo không khớp với thông tin xuất xưởng."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更改銷售地區後綴可能導致驗機工具提示與出廠資料不符。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "變更銷售地區尾碼可能導致驗機工具提示與出廠資訊不符。"
+          }
+        }
+      }
+    },
     "Changing a region flag does not guarantee Apple Intelligence or region-restricted services.": {
       "localizations": {
         "en": {

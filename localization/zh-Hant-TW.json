@@ -272,5 +272,9 @@
   "Respring did not finish.": "登出未完成。",
   "Refreshing SpringBoard…": "正在重新整理 SpringBoard…",
   "This OS build may not support the technique. You can close this screen and try a manual restart later.": "當前系統版本可能不支援此方法。你可以關閉此頁面，稍後手動重新啟動裝置。",
-  "Your device may briefly return to the Lock Screen.": "裝置可能會短暫返回鎖定螢幕。"
+  "Your device may briefly return to the Lock Screen.": "裝置可能會短暫返回鎖定螢幕。",
+  "Region Code": "地區代碼",
+  "Usually, changing the region code is enough. There is no need to change Sales Region.": "通常只需修改地區代碼，無需變更銷售地區。",
+  "* If you previously changed Sales Region, restore your device's original sales region and apply it first.": "* 先前修改過銷售地區的使用者，請先改回裝置原本的銷售地區並套用。",
+  "Changing the sales-region suffix may cause verification tools to report a mismatch with factory information.": "變更銷售地區尾碼可能導致驗機工具提示與出廠資訊不符。"
 }

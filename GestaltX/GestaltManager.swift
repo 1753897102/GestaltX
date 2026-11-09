@@ -18,6 +18,7 @@ final class GestaltManager: ObservableObject {
     @Published var needsRespring = false
     @Published var choices: [String: PresetChoice] = [:]
     @Published var regionID = "keep"
+    @Published private(set) var regionCodeID = "keep"
     @Published var changesName = false
     @Published var modelName = ""
     @Published var subtype = 0
@@ -90,13 +91,22 @@ final class GestaltManager: ObservableObject {
             doc.set(modelName.trimmingCharacters(in: .whitespacesAndNewlines), for: "Z/dqyWS6OZTRy10UcmUAhw")
             doc.set(modelName.trimmingCharacters(in: .whitespacesAndNewlines), for: "bbtR9jQx50Fv5Af/affNtA")
         }
-        if let region = RegionPreset.all.first(where: { $0.id == regionID }), region.id != "keep" {
-            doc.set(region.code, for: GestaltKeys.regionCode)
-            // Choose the key that the loaded OS actually uses; update both only if both exist.
-            let present = [GestaltKeys.regionInfo, GestaltKeys.legacyRegionInfo].filter { doc.extra[$0] != nil }
-            for key in present.isEmpty ? [GestaltKeys.regionInfo] : present { doc.set(region.info, for: key) }
+        if regionCodeID == "LL" {
+            doc.applyRegion(code: "LL")
+        } else if let region = RegionPreset.all.first(where: { $0.id == regionID }), region.id != "keep" {
+            doc.applyRegion(code: region.code, salesSuffix: region.info)
         }
         return doc
+    }
+
+    func selectRegionCode(_ value: String) {
+        regionCodeID = value
+        if value != "keep" { regionID = "keep" }
+    }
+
+    func selectSalesRegion(_ value: String) {
+        regionID = value
+        if value != "keep" { regionCodeID = "keep" }
     }
 
     private func log(_ text: String) {
@@ -107,7 +117,7 @@ final class GestaltManager: ObservableObject {
     private func failed(_ error: Error) { message = error.localizedDescription; log(error.localizedDescription) }
     private func accept(_ loaded: DocumentSnapshot) {
         snapshot = loaded; working = loaded.document
-        choices = [:]; regionID = "keep"; changesName = false; subtype = 0
+        choices = [:]; regionID = "keep"; regionCodeID = "keep"; changesName = false; subtype = 0
         modelName = loaded.document.artwork["ArtworkDeviceProductDescription"] as? String ?? ""
     }
     func clearStaged() {
@@ -202,14 +212,14 @@ final class GestaltManager: ObservableObject {
         doc.set(value, for: key); working = doc
         // Explicit field edits take precedence: discard presets that would overwrite the key.
         for capability in Capability.all where capability.keys.contains(key) { choices[capability.id] = .keep }
-        if [GestaltKeys.regionCode, GestaltKeys.regionInfo, GestaltKeys.legacyRegionInfo].contains(key) { regionID = "keep" }
+        if [GestaltKeys.regionCode, GestaltKeys.regionInfo, GestaltKeys.legacyRegionInfo].contains(key) { regionID = "keep"; regionCodeID = "keep" }
         if key == GestaltKeys.artwork { subtype = 0 }
         if [GestaltKeys.artwork, "Z/dqyWS6OZTRy10UcmUAhw", "bbtR9jQx50Fv5Af/affNtA"].contains(key) { changesName = false }
     }
     func removeField(_ key: String) {
         working?.set(nil, for: key)
         for capability in Capability.all where capability.keys.contains(key) { choices[capability.id] = .keep }
-        if [GestaltKeys.regionCode, GestaltKeys.regionInfo, GestaltKeys.legacyRegionInfo].contains(key) { regionID = "keep" }
+        if [GestaltKeys.regionCode, GestaltKeys.regionInfo, GestaltKeys.legacyRegionInfo].contains(key) { regionID = "keep"; regionCodeID = "keep" }
         if key == GestaltKeys.artwork { subtype = 0 }
         if [GestaltKeys.artwork, "Z/dqyWS6OZTRy10UcmUAhw", "bbtR9jQx50Fv5Af/affNtA"].contains(key) { changesName = false }
     }

@@ -272,5 +272,9 @@
   "Respring did not finish.": "Respring chưa hoàn tất.",
   "Refreshing SpringBoard…": "Đang làm mới SpringBoard…",
   "This OS build may not support the technique. You can close this screen and try a manual restart later.": "Bản hệ điều hành này có thể không hỗ trợ kỹ thuật trên. Bạn có thể đóng màn hình này và khởi động lại thiết bị thủ công sau.",
-  "Your device may briefly return to the Lock Screen.": "Thiết bị có thể trở về Màn hình khóa trong giây lát."
+  "Your device may briefly return to the Lock Screen.": "Thiết bị có thể trở về Màn hình khóa trong giây lát.",
+  "Region Code": "Mã vùng",
+  "Usually, changing the region code is enough. There is no need to change Sales Region.": "Thông thường, chỉ cần thay đổi mã vùng. Không cần đổi khu vực bán hàng.",
+  "* If you previously changed Sales Region, restore your device's original sales region and apply it first.": "* Nếu trước đây bạn đã đổi khu vực bán hàng, hãy khôi phục khu vực bán hàng ban đầu của thiết bị và áp dụng trước.",
+  "Changing the sales-region suffix may cause verification tools to report a mismatch with factory information.": "Thay đổi hậu tố khu vực bán hàng có thể khiến công cụ kiểm tra báo không khớp với thông tin xuất xưởng."
 }
