@@ -69,6 +69,13 @@ More	更多
 Ready	就绪
 Enable	启用
 Disable	停用
+Disable (Restore Original)	停用（恢复原值）
+Remove Added Fields	移除新增字段
+Disabling restores the recorded original values. Use Remove Added Fields only for fields you know were originally absent.	停用会恢复已记录的原值。确认原本不存在的字段，才使用“移除新增字段”。
+Original values could not be read. No system changes were made.	无法读取原值记录，未修改系统文件。
+The original-value record belongs to a different device.	原值记录属于其他设备。
+Original values could not be saved and verified. No system write was started.	无法保存并验证原值记录，未开始写入系统文件。
+The selected added fields must be removed before applying.	请先移除选中的新增字段，再应用更改。
 Keep Current	保持当前值
 Display	显示
 Device	设备
@@ -166,6 +173,10 @@ Local File Backup	本地文件备份
 Open	打开
 Export	导出
 Restore	恢复
+Initial backup	首次备份
+Original values snapshot	修改前原值快照
+Revert	还原
+Original values restored.	已还原原值。
 Restore this backup?	恢复这个备份？
 The current document is backed up first. Device restores are verified after writing.	会先备份当前文稿。本机恢复会在写入后进行验证。
 Delete this backup?	删除这个备份？

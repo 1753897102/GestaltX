@@ -18,7 +18,6 @@ struct ContentView: View {
     @State private var previewCategory: CapabilityCategory?
     #endif
     @AppStorage("GestaltX.acceptedWelcome.v1") private var acceptedWelcome = false
-    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -59,9 +58,6 @@ struct ContentView: View {
         } message: { Text(L("This will attempt to restart SpringBoard using NeoSpring.")) }
         .onChange(of: acceptedWelcome) { _, accepted in
             if accepted && !isPreviewSession { Task { await autoRead() } }
-        }
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .active && model.isRespringing { model.isRespringing = false }
         }
         .task {
             guard !didStart else { return }
@@ -204,7 +200,7 @@ struct CategoryView: View {
                     Text(L("Changing the sales-region suffix may cause verification tools to report a mismatch with factory information."))
                 }
             }
-            Section(L("Presets")) {
+            Section {
                 ForEach(Capability.all.filter { $0.category == category }) { capability in
                     VStack(alignment: .leading, spacing: 4) {
                     Picker(selection: Binding(
@@ -224,11 +220,19 @@ struct CategoryView: View {
                             }
                         }
                     }.pickerStyle(.menu)
-                    if (model.choices[capability.id] ?? .keep) != .keep {
-                        Text(L(capability.effectHint)).font(.caption).foregroundStyle(.secondary)
+                    HStack(alignment: .firstTextBaseline) {
+                        if (model.choices[capability.id] ?? .keep) != .keep {
+                            Text(L(capability.effectHint)).font(.caption).foregroundStyle(.secondary)
+                        }
+                        Spacer(minLength: 8)
+                        Button(L("Revert")) { Task { await model.restoreCapability(capability) } }
+                            .font(.caption).buttonStyle(.borderless)
+                            .disabled(!model.canRestore(capability))
                     }
                     }
                 }
+            } header: {
+                Text(L("Presets"))
             }
             if category == .ipad || category == .advanced {
                 Section { Text(L("Experimental settings. Back up before applying.")).font(.footnote).foregroundStyle(.secondary) }

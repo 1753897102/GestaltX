@@ -4,7 +4,7 @@
 
 <h1 align="center">GestaltX</h1>
 
-[![Version](https://img.shields.io/badge/version-1.0.1-blue)](https://github.com/huamidev/GestaltX)
+[![Version](https://img.shields.io/badge/version-1.0.2-blue)](https://github.com/huamidev/GestaltX)
 [![Platform](https://img.shields.io/badge/iOS-27.x-black?logo=apple)](#compatibility)
 [![SwiftUI](https://img.shields.io/badge/Swift-SwiftUI-orange?logo=swift)](https://github.com/huamidev/GestaltX)
 [![License](https://img.shields.io/badge/license-GPLv3-blue)](LICENSE)
@@ -23,13 +23,15 @@ A MobileGestalt editor for iPhone and iPad. Developed by [huamidev](https://gith
 | Intelligence | Independent region-code options, Apple Intelligence capability flag, and sales-region options for activation attempts on China-mainland devices |
 | Advanced | Apple internal feature flags, internal storage view, Security Research Device flag |
 | Field editor | Read, search, add, edit, and remove `CacheExtra` fields; local plist import/export; String, Integer, Real, Boolean, Data, Date, Array, and Dictionary values |
-| Changes | Automatic reading and manual re-read, staged before/after review, verified writes |
-| Backups | Automatic and manual backups; open, export, restore, and delete |
+| Changes | Automatic reading and manual re-read, staged before/after review, verified writes, per-preset restore |
+| Backups | Automatic initial backup before device editing, backup before every write, original-value records; open, export, restore, and delete |
 | Logs & respring | Actual exploit-stage logs and manual NeoSpring respring |
 
 Usually, changing the region code is enough to try enabling AI; there is no need to change Sales Region. Selecting United States for Region Code sets `RegionCode` to `LL` and keeps the sales-region suffix. You can also choose China (Mainland), Hong Kong, Taiwan, Japan or the United Kingdom. Sales Region and Region Code can be applied together: the sales suffix follows Sales Region, while the code follows Region Code.
 
 *If you previously changed Sales Region, restore your device’s original sales region and apply it first.*
+
+Disabling a preset or using its Revert button restores the recorded original values and types. Keys that were originally absent are removed. If an older change has no original record, use Remove Added Fields only when you know those fields were added.
 
 Presets modify capability flags; actual effects depend on the device and OS. China-mainland devices can use the Apple Intelligence and region options to attempt activation; availability also depends on the model, OS version, and Apple services.
 

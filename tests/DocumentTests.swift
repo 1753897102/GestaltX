@@ -14,6 +14,39 @@ final class AccessTrace: @unchecked Sendable {
     var writes = 0
 }
 @main struct DocumentTests {
+    static func verifyPresetRestoration(data: Data, directory: URL, removeJournal: Bool = false) async throws {
+        let fm = FileManager.default
+        try fm.createDirectory(at: directory, withIntermediateDirectories: true)
+        let original = try GestaltDocument(data: data)
+        for capability in Capability.all {
+            let device = directory.appendingPathComponent(capability.id + ".plist")
+            let backups = directory.appendingPathComponent(capability.id + "-backups", isDirectory: true)
+            try data.write(to: device)
+            let store = GestaltFileStore(deviceURL: device, backupDirectory: backups, deviceID: "preset-fixture", acquire: { 1 }, release: { _ in })
+            let initial = try await store.loadDevice()
+            var enabled = initial.document
+            capability.apply(.enable, to: &enabled, restoringFrom: initial)
+            _ = try await store.commit(enabled, expected: initial)
+            if removeJournal {
+                // An earlier app version has backups but no original-value record.
+                try fm.removeItem(at: backups.appendingPathComponent("OriginalValues.plist"))
+            } else {
+                // Deleting visible backups must not erase the independent record.
+                for record in try await store.backups() { try await store.deleteBackup(record) }
+            }
+            let reopened = GestaltFileStore(deviceURL: device, backupDirectory: backups, deviceID: "preset-fixture", acquire: { 1 }, release: { _ in })
+            let loaded = try await reopened.loadDevice()
+            var restored = loaded.document
+            capability.apply(.disable, to: &restored, restoringFrom: loaded)
+            try expect(restored.matches(original), "Every preset restores exact original presence, values, types and unrelated data: " + capability.id)
+            _ = try await reopened.commit(restored, expected: loaded)
+            let readback = try await reopened.loadDevice()
+            try expect(readback.document.matches(original), "Restored fields survive disk write and reload: " + capability.id)
+            capability.apply(.disable, to: &restored, restoringFrom: readback)
+            try expect(restored.matches(original), "Repeated disable does not create absent keys: " + capability.id)
+        }
+    }
+
     static func main() async throws {
         let fm = FileManager.default
         let root = fm.temporaryDirectory.appendingPathComponent("GestaltX-tests-" + UUID().uuidString, isDirectory: true)
@@ -28,6 +61,93 @@ final class AccessTrace: @unchecked Sendable {
             "CacheData": Data([5, 10, 15]), "UnchangedTopLevel": "keep"
         ]
         let originalData = try PropertyListSerialization.data(fromPropertyList: original, format: .binary, options: 0)
+        try await verifyPresetRestoration(data: originalData, directory: root.appendingPathComponent("absent-presets"))
+        var existingRoot = original
+        var existingExtra = existingRoot["CacheExtra"] as! [String: Any]
+        for capability in Capability.all {
+            for (index, key) in capability.keys.enumerated() {
+                existingExtra[key] = capability.id == "ipadApps" ? [1, 3] : capability.id == "pencil" ? NSNumber(value: 0) : index.isMultiple(of: 2) ? NSNumber(value: false) : NSNumber(value: 0)
+            }
+        }
+        existingRoot["CacheExtra"] = existingExtra
+        let existingData = try PropertyListSerialization.data(fromPropertyList: existingRoot, format: .binary, options: 0)
+        try await verifyPresetRestoration(data: existingData, directory: root.appendingPathComponent("existing-presets"))
+        try await verifyPresetRestoration(data: originalData, directory: root.appendingPathComponent("legacy-presets"), removeJournal: true)
+        if CommandLine.arguments.count > 1 {
+            // Optional private reference stays outside the repository and is never modified.
+            let reference = try Data(contentsOf: URL(fileURLWithPath: CommandLine.arguments[1]))
+            var baseline = try GestaltDocument(data: reference)
+            // The owner confirmed this field was added; the supplied file is
+            // a modified sample, not a factory baseline for other devices.
+            baseline.set(nil, for: Capability.all.first { $0.id == "pencil" }!.keys[0])
+            try await verifyPresetRestoration(data: baseline.encoded(), directory: root.appendingPathComponent("provided-reference"))
+            print("PASS: provided sample roundtrip, with the owner-confirmed added Pencil field absent in the baseline.")
+        }
+        let pencil = Capability.all.first { $0.id == "pencil" }!
+        let pencilKey = pencil.keys[0]
+        var residual = try GestaltDocument(data: originalData)
+        residual.set(NSNumber(value: 0), for: pencilKey)
+        let legacyDevice = root.appendingPathComponent("untracked-pencil.plist")
+        let legacyBackups = root.appendingPathComponent("untracked-pencil-backups")
+        try residual.encoded().write(to: legacyDevice)
+        let legacyStore = GestaltFileStore(deviceURL: legacyDevice, backupDirectory: legacyBackups, deviceID: "legacy-pencil", acquire: { 1 }, release: { _ in })
+        let legacyLoaded = try await legacyStore.loadDevice()
+        var removed = legacyLoaded.document
+        pencil.apply(.removeAdded, to: &removed, restoringFrom: legacyLoaded)
+        _ = try await legacyStore.commit(removed, expected: legacyLoaded, originallyAbsentKeys: [pencilKey])
+        let freshStore = GestaltFileStore(deviceURL: legacyDevice, backupDirectory: legacyBackups, deviceID: "legacy-pencil", acquire: { 1 }, release: { _ in })
+        let fresh = try await freshStore.loadDevice()
+        try expect(fresh.originals[pencilKey] != nil && fresh.originalValue(for: pencilKey) == nil, "Explicit removal records absence instead of retaining an old zero residue")
+        var pencilEnabled = fresh.document
+        pencil.apply(.enable, to: &pencilEnabled, restoringFrom: fresh)
+        let enabledAgain = try await freshStore.commit(pencilEnabled, expected: fresh)
+        var pencilDisabled = enabledAgain.document
+        pencil.apply(.disable, to: &pencilDisabled, restoringFrom: enabledAgain)
+        try expect(pencilDisabled.extra[pencilKey] == nil, "Enable then disable after legacy cleanup does not recreate Pencil zero")
+        let wrongDeviceStore = GestaltFileStore(deviceURL: legacyDevice, backupDirectory: legacyBackups, deviceID: "another-installation", acquire: { 1 }, release: { _ in })
+        do { _ = try await wrongDeviceStore.loadDevice(); throw TestFailure(message: "Must reject foreign original-value records") }
+        catch is GestaltFailure {}
+        let unreadableRecordDevice = root.appendingPathComponent("bad-origin-device.plist")
+        let unreadableRecordBackups = root.appendingPathComponent("bad-origin-backups")
+        try originalData.write(to: unreadableRecordDevice)
+        let originalTrace = AccessTrace()
+        let badOriginStore = GestaltFileStore(deviceURL: unreadableRecordDevice, backupDirectory: unreadableRecordBackups, deviceID: "bad-origin", acquire: { 1 }, release: { _ in }, writeData: { _, _ in originalTrace.writes += 1 })
+        let beforeBadOrigin = try await badOriginStore.loadDevice()
+        try fm.createDirectory(at: unreadableRecordBackups.appendingPathComponent("OriginalValues.plist"), withIntermediateDirectories: true)
+        var badOriginEdit = beforeBadOrigin.document
+        pencil.apply(.enable, to: &badOriginEdit, restoringFrom: beforeBadOrigin)
+        do { _ = try await badOriginStore.commit(badOriginEdit, expected: beforeBadOrigin); throw TestFailure(message: "Broken originals must stop a system write") }
+        catch is GestaltFailure {}
+        try expect(originalTrace.writes == 0 && (try Data(contentsOf: unreadableRecordDevice)) == originalData, "No system write when original values cannot be preserved")
+        let unknownSnapshot = DocumentSnapshot(data: try residual.encoded(), document: residual, source: .local, name: "unknown")
+        var unknown = residual
+        pencil.apply(.disable, to: &unknown, restoringFrom: unknownSnapshot)
+        try expect(unknown.matches(residual), "Without prior records, do not guess an existing zero field was originally absent")
+        let srd = Capability.all.first { $0.id == "srd" }!
+        let srdKey = srd.keys[0]
+        let srdDevice = root.appendingPathComponent("srd-device.plist")
+        try originalData.write(to: srdDevice)
+        let srdStore = GestaltFileStore(deviceURL: srdDevice, backupDirectory: root.appendingPathComponent("srd-backups"), deviceID: "fixture-srd", acquire: { 1 }, release: { _ in })
+        let srdInitial = try await srdStore.loadDevice()
+        var srdDocument = srdInitial.document
+        srd.apply(.keep, to: &srdDocument, restoringFrom: srdInitial)
+        try expect(srdDocument.matches(srdInitial.document), "Keep Current must not alter SRD")
+        srd.apply(.enable, to: &srdDocument, restoringFrom: srdInitial)
+        _ = try await srdStore.commit(srdDocument, expected: srdInitial)
+        let srdReloaded = try await srdStore.loadDevice()
+        try expect((srdReloaded.document.extra[srdKey] as? NSNumber)?.intValue == 1, "SRD enable persists across reload")
+        srdDocument = srdReloaded.document
+        srd.apply(.disable, to: &srdDocument, restoringFrom: srdReloaded)
+        try expect(srdDocument.extra[srdKey] == nil, "SRD disable removes the override instead of storing zero")
+        let srdDisabled = try await srdStore.commit(srdDocument, expected: srdReloaded)
+        try expect(srdDisabled.document.matches(srdInitial.document), "Disabling an added SRD override restores the original document")
+        let srdAfterDisable = try await srdStore.loadDevice()
+        try expect(srdAfterDisable.document.extra[srdKey] == nil, "Removed SRD override stays absent after readback")
+        srdDocument = srdAfterDisable.document
+        srd.apply(.disable, to: &srdDocument, restoringFrom: srdAfterDisable)
+        try expect(srdDocument.matches(srdInitial.document), "Disabling an absent SRD key does not create a zero override")
+        let srdBackups = try await srdStore.backups()
+        try expect(srdBackups.count == 3, "Initial read, SRD enable and disable retain backups")
         // A region-code edit must not rewrite or synthesize either sales suffix,
         // alter the separate AI flag, or touch CacheData and other device fields.
         for suffixKeys in [[], [GestaltKeys.regionInfo], [GestaltKeys.legacyRegionInfo], [GestaltKeys.regionInfo, GestaltKeys.legacyRegionInfo]] {
@@ -83,7 +203,7 @@ final class AccessTrace: @unchecked Sendable {
             trace.acquired += 1; return 0
         }, release: { trace.released.append($0) }, writeData: { data, url in
             trace.writes += 1
-            let files = try fm.contentsOfDirectory(at: backups, includingPropertiesForKeys: nil)
+            let files = try FileManager.default.contentsOfDirectory(at: backups, includingPropertiesForKeys: nil)
             try expect(files.contains { $0.pathExtension == "plist" }, "A backup must exist before the system write")
             try data.write(to: url)
         })
@@ -103,15 +223,29 @@ final class AccessTrace: @unchecked Sendable {
         try expect(GestaltDocument.valuesEqual(nested, roundtrip), "Nested XML roundtrip preserves types")
         _ = try PlistValueKind.date.parse("2026-11-09T12:00:00.125Z")
         let initial = try await store.loadDevice()
+        let firstReadBackups = try await store.backups()
+        try expect(firstReadBackups.count == 1 && firstReadBackups[0].reason == "Initial backup", "First device read saves a backup before editing")
+        _ = try await store.loadDevice()
+        try expect(try await store.backups().count == 1, "Repeated reads do not duplicate the initial backup")
+        trace.released.removeAll()
+        var pending = initial.document
+        pending.set("pending", for: "unrelated-pending")
+        pending.set(nil, for: "payload")
+        pending.set(NSNumber(value: 1), for: srdKey)
+        var latest = initial.document
+        latest.set(nil, for: srdKey)
+        let rebased = initial.rebasingPendingEdits(pending, onto: latest, excluding: [srdKey])
+        try expect(rebased.extra[srdKey] == nil, "Single-row restore removes the target's pending override")
+        try expect(rebased.extra["unrelated-pending"] as? String == "pending" && rebased.extra["payload"] == nil, "Single-row restore preserves unrelated pending additions and deletions")
         document.set("edited", for: "new")
         let committed = try await store.commit(document, expected: initial)
         try expect(committed.document.matches(document), "Successful transaction must match readback")
         try expect((committed.document.root["CacheData"] as? Data) == Data([5, 10, 15]), "Preserve CacheData")
         try expect((committed.document.root["UnchangedTopLevel"] as? String) == "keep", "Preserve unrelated root values")
         let records = try await store.backups()
-        try expect(records.count == 1 && records[0].source == .device, "Persistent source-bound backup")
+        try expect(records.count == 2 && records.allSatisfy { $0.source == .device }, "Initial and transaction backups are persistent and source-bound")
         try expect(try await store.backupData(records[0]) == originalData, "Backup stores the original bytes")
-        try expect(trace.released == [0, 0], "Zero is a valid extension handle and must be released")
+        try expect(trace.released == [0], "Zero is a valid extension handle and must be released")
         do { _ = try await store.commit(document, expected: initial); throw TestFailure(message: "Reject stale snapshot") }
         catch is GestaltFailure {}
         try expect(trace.writes == 1, "Stale write must not reach writer")
@@ -137,8 +271,7 @@ final class AccessTrace: @unchecked Sendable {
         try Data("occupied".utf8).write(to: occupied)
         let blockedTrace = AccessTrace()
         let blocked = GestaltFileStore(deviceURL: device, backupDirectory: occupied, deviceID: "fixture", acquire: { 1 }, release: { _ in }, writeData: { _, _ in blockedTrace.writes += 1 })
-        let blockedSnapshot = try await blocked.loadDevice()
-        do { _ = try await blocked.commit(document, expected: blockedSnapshot); throw TestFailure(message: "Backup failure must stop write") }
+        do { _ = try await blocked.loadDevice(); throw TestFailure(message: "Initial backup failure must stop device editing") }
         catch is TestFailure { throw TestFailure(message: "Backup failure must stop write") } catch {}
         try expect(blockedTrace.writes == 0, "No system writer after backup failure")
         let local = GestaltFileStore(deviceURL: device, backupDirectory: root.appendingPathComponent("local"), deviceID: "local", acquire: { throw TestFailure(message: "Local mode must not acquire device access") }, release: { _ in })

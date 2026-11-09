@@ -276,5 +276,16 @@
   "Region Code": "کد منطقه",
   "Usually, changing the region code is enough. There is no need to change Sales Region.": "معمولاً تغییر کد منطقه کافی است. نیازی به تغییر منطقهٔ فروش نیست.",
   "* If you previously changed Sales Region, restore your device's original sales region and apply it first.": "* اگر قبلاً منطقهٔ فروش را تغییر داده‌اید، ابتدا منطقهٔ فروش اصلی دستگاه را بازگردانید و تغییر را اعمال کنید.",
-  "Changing the sales-region suffix may cause verification tools to report a mismatch with factory information.": "تغییر پسوند منطقهٔ فروش ممکن است باعث شود ابزارهای بررسی، عدم تطابق با اطلاعات کارخانه را گزارش کنند."
+  "Changing the sales-region suffix may cause verification tools to report a mismatch with factory information.": "تغییر پسوند منطقهٔ فروش ممکن است باعث شود ابزارهای بررسی، عدم تطابق با اطلاعات کارخانه را گزارش کنند.",
+  "Disable (Restore Original)": "غیرفعال (بازگردانی مقادیر اصلی)",
+  "Remove Added Fields": "حذف فیلدهای افزوده‌شده",
+  "Disabling restores the recorded original values. Use Remove Added Fields only for fields you know were originally absent.": "غیرفعال‌سازی مقادیر اصلی ثبت‌شده را بازمی‌گرداند. فقط فیلدهایی را حذف کنید که مطمئن هستید از ابتدا وجود نداشته‌اند.",
+  "Original values could not be read. No system changes were made.": "مقادیر اصلی خوانده نشدند. فایل‌های سیستم تغییر نکرده‌اند.",
+  "The original-value record belongs to a different device.": "سابقهٔ مقادیر اصلی متعلق به دستگاه دیگری است.",
+  "Original values could not be saved and verified. No system write was started.": "ذخیره و تأیید مقادیر اصلی ممکن نشد. نوشتن فایل سیستم آغاز نشده است.",
+  "The selected added fields must be removed before applying.": "پیش از اعمال، فیلدهای افزوده‌شدهٔ انتخابی باید حذف شوند.",
+  "Initial backup": "پشتیبان اولیه",
+  "Original values snapshot": "نسخه‌ای از مقادیر اصلی",
+  "Revert": "بازگردانی",
+  "Original values restored.": "مقادیر اصلی بازگردانده شدند."
 }
