@@ -1795,52 +1795,6 @@
         }
       }
     },
-    "Read or import a plist in Tools.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Read or import a plist in Tools."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在“工具”中读取或导入 plist。"
-          }
-        },
-        "fa": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "در بخش ابزارها یک plist را بخوانید یا وارد کنید."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Прочитайте или импортируйте plist в разделе «Инструменты»."
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Đọc hoặc nhập tệp plist trong Công cụ."
-          }
-        },
-        "zh-Hant-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在“工具”中讀取或導入 plist。"
-          }
-        },
-        "zh-Hant-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在“工具”中讀取或匯入 plist。"
-          }
-        }
-      }
-    },
     "No Backups": {
       "localizations": {
         "en": {
@@ -2205,52 +2159,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "工具"
-          }
-        }
-      }
-    },
-    "Fields": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fields"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "字段"
-          }
-        },
-        "fa": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "فیلدها"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Поля"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trường"
-          }
-        },
-        "zh-Hant-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "欄位"
-          }
-        },
-        "zh-Hant-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "欄位"
           }
         }
       }
@@ -13295,98 +13203,6 @@
         }
       }
     },
-    "Remove Mainland China Restrictions": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove Mainland China Restrictions"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "解除国行限制"
-          }
-        },
-        "fa": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "رفع محدودیت دستگاه‌های چین"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Снять ограничения устройств для Китая"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gỡ giới hạn máy Trung Quốc đại lục"
-          }
-        },
-        "zh-Hant-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "解除國行限制"
-          }
-        },
-        "zh-Hant-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "解除中國大陸機型限制"
-          }
-        }
-      }
-    },
-    "Try enabling eSIM, FaceTime Audio (27.3), and other region-restricted features. Hardware and carrier support are required. Restart after applying.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Try enabling eSIM, FaceTime Audio (27.3), and other region-restricted features. Hardware and carrier support are required. Restart after applying."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "尝试解除 eSIM、FaceTime 音频（27.3）等功能限制，仍需硬件和运营商支持。应用后请重启。"
-          }
-        },
-        "fa": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "تلاش برای فعال‌سازی eSIM، تماس صوتی FaceTime (27.3) و دیگر قابلیت‌های محدودشده بر اساس منطقه. پشتیبانی سخت‌افزار و اپراتور لازم است. پس از اعمال، دستگاه را راه‌اندازی مجدد کنید."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Попытка включить eSIM, аудиовызовы FaceTime (27.3) и другие функции с региональными ограничениями. Требуется поддержка оборудования и оператора. После применения перезагрузите устройство."
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Thử bật eSIM, âm thanh FaceTime (27.3) và các tính năng bị giới hạn theo khu vực. Vẫn cần phần cứng và nhà mạng hỗ trợ. Khởi động lại sau khi áp dụng."
-          }
-        },
-        "zh-Hant-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "嘗試解除 eSIM、FaceTime 音訊（27.3）等功能限制，仍需硬件和網絡供應商支援。套用後請重新啟動。"
-          }
-        },
-        "zh-Hant-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "嘗試解除 eSIM、FaceTime 音訊（27.3）等功能限制，仍需硬體與電信業者支援。套用後請重新啟動。"
-          }
-        }
-      }
-    },
     "The cache layout or values do not match this preset.": {
       "localizations": {
         "en": {
@@ -13479,52 +13295,6 @@
         }
       }
     },
-    "Region restriction flags written and verified. Restart the device to apply.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Region restriction flags written and verified. Restart the device to apply."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "地区限制标记已写入并验证，请重启设备使其生效。"
-          }
-        },
-        "fa": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "پرچم‌های محدودیت منطقه نوشته و تأیید شدند. برای اعمال، دستگاه را راه‌اندازی مجدد کنید."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Флаги региональных ограничений записаны и проверены. Перезагрузите устройство для применения."
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Đã ghi và xác minh các cờ giới hạn khu vực. Khởi động lại thiết bị để áp dụng."
-          }
-        },
-        "zh-Hant-HK": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "地區限制標記已寫入並驗證，請重新啟動裝置使其生效。"
-          }
-        },
-        "zh-Hant-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "地區限制標記已寫入並驗證，請重新啟動裝置使其生效。"
-          }
-        }
-      }
-    },
     "Unable to resolve this device's MobileGestalt cache layout.": {
       "localizations": {
         "en": {
@@ -13567,6 +13337,926 @@
           "stringUnit": {
             "state": "translated",
             "value": "無法解析此裝置的 MobileGestalt 快取配置。"
+          }
+        }
+      }
+    },
+    "Importing Plist…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importing Plist…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在导入 plist…"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "در حال وارد کردن plist…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Импорт plist…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang nhập plist…"
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在匯入 plist…"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在匯入 plist…"
+          }
+        }
+      }
+    },
+    "Share one MobileGestalt plist at a time.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share one MobileGestalt plist at a time."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请每次分享一个 MobileGestalt plist 文件。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هر بار یک فایل plist مربوط به MobileGestalt را به اشتراک بگذارید."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отправляйте по одному plist-файлу MobileGestalt."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mỗi lần chỉ chia sẻ một tệp plist MobileGestalt."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請每次分享一個 MobileGestalt plist 檔案。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請每次分享一個 MobileGestalt plist 檔案。"
+          }
+        }
+      }
+    },
+    "Sign GestaltX and its share extension with the same App Group, then try again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign GestaltX and its share extension with the same App Group, then try again."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请为 GestaltX 和分享扩展签入同一个 App Group 后重试。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GestaltX و افزونهٔ اشتراک‌گذاری آن را با App Group یکسان امضا کنید و دوباره امتحان کنید."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подпишите GestaltX и расширение общего доступа с одной и той же App Group и повторите попытку."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ký GestaltX và tiện ích chia sẻ với cùng một App Group, rồi thử lại."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請為 GestaltX 和分享延伸功能簽入同一個 App Group 後重試。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請為 GestaltX 和分享延伸功能簽入相同的 App Group 後重試。"
+          }
+        }
+      }
+    },
+    "The shared plist could not be read. Share it again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The shared plist could not be read. Share it again."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法读取分享的 plist，请重新分享。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فایل plist اشتراک‌گذاری‌شده خوانده نشد. دوباره آن را به اشتراک بگذارید."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось прочитать полученный plist. Отправьте его ещё раз."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không thể đọc tệp plist đã chia sẻ. Hãy chia sẻ lại."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法讀取分享的 plist，請重新分享。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法讀取分享的 plist，請重新分享。"
+          }
+        }
+      }
+    },
+    "A shared plist is waiting. Save or discard your current changes, then import it.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A shared plist is waiting. Save or discard your current changes, then import it."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有分享的 plist 等待导入，请先保存或放弃当前更改。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "یک فایل plist اشتراک‌گذاری‌شده در انتظار است. ابتدا تغییرات فعلی را ذخیره یا لغو کنید."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Полученный plist ожидает импорта. Сначала сохраните или отмените текущие изменения."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Có plist đã chia sẻ đang chờ nhập. Hãy lưu hoặc bỏ các thay đổi hiện tại trước."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有分享的 plist 等待匯入，請先儲存或捨棄目前的更改。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有分享的 plist 等待匯入，請先儲存或捨棄目前的更改。"
+          }
+        }
+      }
+    },
+    "Save or discard your current changes before opening another plist.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save or discard your current changes before opening another plist."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请先保存或放弃当前更改，再打开另一个 plist。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پیش از باز کردن plist دیگر، تغییرات فعلی را ذخیره یا لغو کنید."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сохраните или отмените текущие изменения, прежде чем открывать другой plist."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hãy lưu hoặc bỏ các thay đổi hiện tại trước khi mở plist khác."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請先儲存或捨棄目前的更改，再開啟另一個 plist。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請先儲存或捨棄目前的更改，再開啟另一個 plist。"
+          }
+        }
+      }
+    },
+    "Import": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导入"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وارد کردن"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Импортировать"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập"
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "匯入"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "匯入"
+          }
+        }
+      }
+    },
+    "Open GestaltX to confirm importing the plist.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open GestaltX to confirm importing the plist."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请打开 GestaltX 确认导入 plist。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "برای تأیید وارد کردن plist، برنامهٔ GestaltX را باز کنید."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Откройте GestaltX, чтобы подтвердить импорт plist."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở GestaltX để xác nhận nhập plist."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請開啟 GestaltX 確認匯入 plist。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請開啟 GestaltX 確認匯入 plist。"
+          }
+        }
+      }
+    },
+    "This device's identity could not be verified. Read MobileGestalt on this device and try sharing again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This device's identity could not be verified. Read MobileGestalt on this device and try sharing again."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法核验本机身份，请先读取本机 MobileGestalt 后重新分享。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هویت این دستگاه تأیید نشد. ابتدا MobileGestalt را روی همین دستگاه بخوانید و دوباره فایل را به اشتراک بگذارید."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось проверить идентификаторы устройства. Считайте MobileGestalt на этом устройстве и отправьте файл повторно."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không thể xác minh danh tính thiết bị này. Đọc MobileGestalt trên thiết bị này rồi chia sẻ lại."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法核驗本機身份，請先讀取本機 MobileGestalt 後重新分享。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法核驗本機身分，請先讀取本機 MobileGestalt 後重新分享。"
+          }
+        }
+      }
+    },
+    "This plist belongs to another device and cannot be imported.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This plist belongs to another device and cannot be imported."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 plist 的设备标识与本机不符，无法导入。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "شناسه‌های این plist با دستگاه فعلی مطابقت ندارند و فایل قابل وارد کردن نیست."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Идентификаторы в plist не совпадают с этим устройством. Импорт невозможен."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mã định danh trong plist không khớp thiết bị này nên không thể nhập."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 plist 的裝置識別資料與本機不符，無法匯入。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 plist 的裝置識別資訊與本機不符，無法匯入。"
+          }
+        }
+      }
+    },
+    "This plist does not contain enough device identifiers to verify ownership.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This plist does not contain enough device identifiers to verify ownership."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 plist 缺少足够的设备标识，无法确认属于本机。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "این plist شناسه‌های کافی برای تأیید تعلق به دستگاه فعلی ندارد."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В plist недостаточно идентификаторов для проверки принадлежности устройству."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plist không có đủ mã định danh để xác minh thuộc thiết bị này."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 plist 缺少足夠的裝置識別資料，無法確認屬於本機。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 plist 缺少足夠的裝置識別資訊，無法確認屬於本機。"
+          }
+        }
+      }
+    },
+    "Additional Options": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Additional Options"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "附加选项"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گزینه‌های بیشتر"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дополнительные параметры"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tùy chọn bổ sung"
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "附加選項"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "附加選項"
+          }
+        }
+      }
+    },
+    "MG Control": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MG Control"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MG 控制"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "کنترل MG"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Управление MG"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Điều khiển MG"
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MG 控制"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MG 控制"
+          }
+        }
+      }
+    },
+    "Read MobileGestalt in Tools, or share this device's plist to GestaltX.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read MobileGestalt in Tools, or share this device's plist to GestaltX."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在工具中读取 MobileGestalt，或将本机 plist 分享到 GestaltX。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MobileGestalt را در ابزارها بخوانید یا plist همین دستگاه را با GestaltX به اشتراک بگذارید."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Считайте MobileGestalt в разделе инструментов или отправьте plist этого устройства в GestaltX."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đọc MobileGestalt trong Công cụ hoặc chia sẻ plist của thiết bị này đến GestaltX."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在工具中讀取 MobileGestalt，或將本機 plist 分享到 GestaltX。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在工具中讀取 MobileGestalt，或將本機 plist 分享至 GestaltX。"
+          }
+        }
+      }
+    },
+    "This plist has been verified for this device. Import it?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This plist has been verified for this device. Import it?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已核验此 plist 属于本机，是否导入？"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "این plist برای همین دستگاه تأیید شده است. فایل وارد شود؟"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Этот plist проверен для данного устройства. Импортировать?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plist đã được xác minh cho thiết bị này. Nhập tệp?"
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已核驗此 plist 屬於本機，是否匯入？"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已核驗此 plist 屬於本機，是否匯入？"
+          }
+        }
+      }
+    },
+    "This plist's device proof could not be verified on this device.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This plist's device proof could not be verified on this device."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法在本机验证此 plist 的设备凭证。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گواه دستگاه این plist در دستگاه فعلی قابل تأیید نیست."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось проверить подтверждение принадлежности plist этому устройству."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không thể xác minh bằng chứng thiết bị của plist này trên thiết bị hiện tại."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法在本機驗證此 plist 的裝置憑證。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法在本機驗證此 plist 的裝置憑證。"
+          }
+        }
+      }
+    },
+    "This plist uses a different system cache layout and cannot be restored.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This plist uses a different system cache layout and cannot be restored."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 plist 的系统缓存布局与本机不符，无法恢复。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ساختار حافظهٔ نهان سیستم این plist با دستگاه فعلی متفاوت است و قابل بازیابی نیست."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Структура системного кэша plist отличается от текущей. Восстановление невозможно."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bố cục bộ nhớ đệm hệ thống của plist không khớp thiết bị này nên không thể khôi phục."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 plist 的系統快取配置與本機不符，無法還原。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 plist 的系統快取配置與本機不符，無法回復。"
+          }
+        }
+      }
+    },
+    "Restore Imported Plist": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore Imported Plist"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复导入的 plist"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بازیابی plist واردشده"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Восстановить импортированный plist"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khôi phục plist đã nhập"
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "還原匯入的 plist"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回復匯入的 plist"
+          }
+        }
+      }
+    },
+    "The current device file will be backed up before restoring. Restart the device afterward.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The current device file will be backed up before restoring. Restart the device afterward."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复前会备份当前设备文件，完成后请重启设备。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پیش از بازیابی، از فایل فعلی دستگاه نسخهٔ پشتیبان تهیه می‌شود. پس از پایان، دستگاه را راه‌اندازی مجدد کنید."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перед восстановлением будет создана резервная копия текущего файла устройства. Затем перезагрузите устройство."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tệp hiện tại trên thiết bị sẽ được sao lưu trước khi khôi phục. Sau đó hãy khởi động lại thiết bị."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "還原前會備份目前的裝置檔案，完成後請重新啟動裝置。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回復前會備份目前的裝置檔案，完成後請重新啟動裝置。"
+          }
+        }
+      }
+    },
+    "Share this device's plist to GestaltX to edit its keys and values or restore a verified backup. Export a copy from GestaltX first to keep a device-bound proof.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share this device's plist to GestaltX to edit its keys and values or restore a verified backup. Export a copy from GestaltX first to keep a device-bound proof."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在可将本机 plist 分享到 GestaltX，核验后导入、增删改键值并恢复。建议先从 GestaltX 导出一份带本机校验凭证的备份。"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "plist همین دستگاه را با GestaltX به اشتراک بگذارید تا پس از تأیید، کلیدها و مقدارها را اضافه، ویرایش یا حذف کنید یا نسخهٔ پشتیبان را بازیابی کنید. بهتر است ابتدا یک نسخه با گواه مخصوص دستگاه از GestaltX صادر کنید."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отправьте plist этого устройства в GestaltX для проверки, импорта, добавления, изменения и удаления ключей и восстановления копии. Сначала рекомендуется экспортировать копию из GestaltX с подтверждением для этого устройства."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chia sẻ plist của thiết bị này đến GestaltX để nhập sau khi xác minh, thêm, sửa, xóa khóa và giá trị hoặc khôi phục bản sao lưu. Trước tiên nên xuất bản sao từ GestaltX kèm bằng chứng gắn với thiết bị."
+          }
+        },
+        "zh-Hant-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "現在可將本機 plist 分享到 GestaltX，核驗後匯入、新增、刪除或修改鍵值並還原。建議先從 GestaltX 匯出一份附有本機驗證憑證的備份。"
+          }
+        },
+        "zh-Hant-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "現在可將本機 plist 分享至 GestaltX，核驗後匯入、新增、刪除或修改鍵值並回復。建議先從 GestaltX 匯出一份附有本機驗證憑證的備份。"
           }
         }
       }

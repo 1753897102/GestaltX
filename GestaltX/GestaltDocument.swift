@@ -106,9 +106,9 @@ struct GestaltDocument: @unchecked Sendable {
         root["CacheExtra"] = updated
     }
 
-    mutating func setFaceTimeAudio(_ flags: FaceTimeAudioFlags, using resolvedLayout: MobileGestaltCacheLayout? = nil) throws {
+    mutating func setCacheOptions(_ flags: CachedOptionFlags, using resolvedLayout: MobileGestaltCacheLayout? = nil) throws {
         let layout = try resolvedLayout ?? MobileGestaltCacheLayout.resolve(in: self)
-        var data = try FaceTimeAudioCache.validatedData(in: self, using: layout)
+        var data = try DeviceCacheOptions.validatedData(in: self, using: layout)
         data[layout.greenTeaOffset] = flags.greenTea ? 1 : 0
         data[layout.notGreenTeaOffset] = flags.notGreenTea ? 1 : 0
         root["CacheData"] = data
@@ -195,21 +195,22 @@ struct DocumentSnapshot: @unchecked Sendable {
     let source: DocumentSource
     let name: String
     var originals: [String: OriginalField] = [:]
-    var faceTimeAudioOriginal: FaceTimeAudioOriginal?
+    var cachedOptionsOriginal: CachedOptionsOriginal?
+    var ownershipVerified = false
 
-    func originalFaceTimeAudioFlags() throws -> FaceTimeAudioFlags {
-        if let faceTimeAudioOriginal { return try faceTimeAudioOriginal.flags(in: document) }
+    func originalCachedOptionFlags() throws -> CachedOptionFlags {
+        if let cachedOptionsOriginal { return try cachedOptionsOriginal.flags(in: document) }
         // No history means the loaded values are the baseline, not a guessed restriction.
-        return try FaceTimeAudioCache.flags(in: document)
+        return try DeviceCacheOptions.flags(in: document)
     }
 
     func recordingOriginals(to edited: GestaltDocument) -> OriginalValues {
-        var audio = faceTimeAudioOriginal
-        if audio == nil, let before = try? FaceTimeAudioOriginal(document: document),
-           let after = try? FaceTimeAudioCache.flags(in: edited), before.flags != after {
+        var audio = cachedOptionsOriginal
+        if audio == nil, let before = try? CachedOptionsOriginal(document: document),
+           let after = try? DeviceCacheOptions.flags(in: edited), before.flags != after {
             audio = before
         }
-        return OriginalValues(fields: recordingChanges(to: edited), faceTimeAudio: audio)
+        return OriginalValues(fields: recordingChanges(to: edited), cachedOptions: audio)
     }
 
     func originalValue(for key: String) -> Any? {
@@ -247,7 +248,7 @@ struct DocumentSnapshot: @unchecked Sendable {
 }
 struct OriginalValues {
     var fields: [String: OriginalField] = [:]
-    var faceTimeAudio: FaceTimeAudioOriginal?
+    var cachedOptions: CachedOptionsOriginal?
 }
 
 struct BackupRecord: Identifiable, Codable, Sendable {
@@ -296,15 +297,15 @@ actor GestaltFileStore {
             if try !backups().contains(where: { $0.source == .device && $0.deviceID == deviceID }) {
                 var baseline = document
                 for (key, original) in originals.fields { baseline.set(original.value, for: key) }
-                if let audio = originals.faceTimeAudio, let flags = try? audio.flags(in: baseline) {
-                    try baseline.setFaceTimeAudio(flags)
+                if let audio = originals.cachedOptions, let flags = try? audio.flags(in: baseline) {
+                    try baseline.setCacheOptions(flags)
                 }
-                let hasOriginals = !originals.fields.isEmpty || originals.faceTimeAudio != nil
+                let hasOriginals = !originals.fields.isEmpty || originals.cachedOptions != nil
                 let initialData = hasOriginals ? try baseline.encoded() : data
                 try saveBackup(initialData, source: .device, reason: hasOriginals ? "Original values snapshot" : "Initial backup")
             }
             return DocumentSnapshot(data: data, document: document, source: .device, name: "MobileGestalt",
-                                    originals: originals.fields, faceTimeAudioOriginal: originals.faceTimeAudio)
+                                    originals: originals.fields, cachedOptionsOriginal: originals.cachedOptions)
         }
     }
 
@@ -336,7 +337,7 @@ actor GestaltFileStore {
     private func loadOriginals(for document: GestaltDocument) throws -> OriginalValues {
         guard FileManager.default.fileExists(atPath: originalsURL.path) else {
             let recovered = try recoverOriginals(from: document)
-            if !recovered.fields.isEmpty || recovered.faceTimeAudio != nil {
+            if !recovered.fields.isEmpty || recovered.cachedOptions != nil {
                 try saveOriginals(recovered, for: document)
             }
             return recovered
@@ -359,19 +360,19 @@ actor GestaltFileStore {
             }
             originals[key] = OriginalField(value: entry["value"])
         }
-        var audio: FaceTimeAudioOriginal?
+        var audio: CachedOptionsOriginal?
         if let entry = plist["faceTimeAudio"] {
             guard let bytes = entry as? Data,
-                  let decoded = try? PropertyListDecoder().decode(FaceTimeAudioOriginal.self, from: bytes) else {
+                  let decoded = try? PropertyListDecoder().decode(CachedOptionsOriginal.self, from: bytes) else {
                 throw GestaltFailure("Original values could not be read. No system changes were made.")
             }
             audio = decoded
         }
         // Older v1 journals have no cache entry. Recover it from owned backups
         // without replacing their already-recorded CacheExtra originals.
-        let recoveredAudio = audio == nil ? try recoverOriginals(from: document).faceTimeAudio : nil
+        let recoveredAudio = audio == nil ? try recoverOriginals(from: document).cachedOptions : nil
         if let recoveredAudio { audio = recoveredAudio }
-        let state = OriginalValues(fields: originals, faceTimeAudio: audio)
+        let state = OriginalValues(fields: originals, cachedOptions: audio)
         if recoveredAudio != nil { try saveOriginals(state, for: document) }
         return state
     }
@@ -389,17 +390,17 @@ actor GestaltFileStore {
             guard document.matchesIdentity(current) else { continue }
             if let previous {
                 originals = DocumentSnapshot(data: Data(), document: previous, source: .device, name: "",
-                                             originals: originals.fields, faceTimeAudioOriginal: originals.faceTimeAudio)
+                                             originals: originals.fields, cachedOptionsOriginal: originals.cachedOptions)
                     .recordingOriginals(to: document)
             }
             previous = document
         }
         if let previous {
             originals = DocumentSnapshot(data: Data(), document: previous, source: .device, name: "",
-                                         originals: originals.fields, faceTimeAudioOriginal: originals.faceTimeAudio)
+                                         originals: originals.fields, cachedOptionsOriginal: originals.cachedOptions)
                 .recordingOriginals(to: current)
         }
-        if !originals.fields.isEmpty || originals.faceTimeAudio != nil {
+        if !originals.fields.isEmpty || originals.cachedOptions != nil {
             eventSink("Original values: recovered from device backups")
         }
         return originals
@@ -409,7 +410,7 @@ actor GestaltFileStore {
         var plist: [String: Any] = ["version": 1, "deviceID": deviceID, "identity": identity(of: document),
                                    "values": originals.fields.mapValues(\.plist)]
         do {
-            if let audio = originals.faceTimeAudio { plist["faceTimeAudio"] = try PropertyListEncoder().encode(audio) }
+            if let audio = originals.cachedOptions { plist["faceTimeAudio"] = try PropertyListEncoder().encode(audio) }
             let data = try PropertyListSerialization.data(fromPropertyList: plist, format: .binary, options: 0)
             try data.write(to: originalsURL, options: .atomic)
             guard try Data(contentsOf: originalsURL) == data else {
@@ -452,9 +453,24 @@ actor GestaltFileStore {
         try FileManager.default.removeItem(at: backupDirectory.appendingPathComponent(record.filename))
     }
 
+    func restoreVerifiedImport(_ imported: DocumentSnapshot, expected: DocumentSnapshot) throws -> DocumentSnapshot {
+        guard imported.source == .local, imported.ownershipVerified, expected.source == .device else {
+            throw GestaltFailure("This plist's device proof could not be verified on this device.")
+        }
+        guard let uuid = imported.document.root["CacheUUID"] as? String, !uuid.isEmpty,
+              expected.document.root["CacheUUID"] as? String == uuid,
+              imported.document.root["CacheVersion"] as? String == expected.document.root["CacheVersion"] as? String,
+              let data = imported.document.root["CacheData"] as? Data,
+              let current = expected.document.root["CacheData"] as? Data, data.count == current.count else {
+            throw GestaltFailure("This plist uses a different system cache layout and cannot be restored.")
+        }
+        let record = try saveBackup(imported.data, source: .device, reason: "Verified import")
+        return try commit(imported.document, expected: expected, restoring: record)
+    }
+
     func commit(_ edited: GestaltDocument, expected: DocumentSnapshot, restoring record: BackupRecord? = nil,
                 originallyAbsentKeys: Set<String> = []) throws -> DocumentSnapshot {
-        if record == nil { try FaceTimeAudioCache.validateEdit(from: expected.document, to: edited) }
+        if record == nil { try DeviceCacheOptions.validateEdit(from: expected.document, to: edited) }
         guard originallyAbsentKeys.allSatisfy({ edited.extra[$0] == nil }) else {
             throw GestaltFailure("The selected added fields must be removed before applying.")
         }
@@ -464,7 +480,7 @@ actor GestaltFileStore {
             var originals = expected.recordingOriginals(to: edited)
             for key in originallyAbsentKeys { originals.fields[key] = OriginalField(value: nil) }
             return DocumentSnapshot(data: output, document: edited, source: .local, name: expected.name,
-                                    originals: originals.fields, faceTimeAudioOriginal: originals.faceTimeAudio)
+                                    originals: originals.fields, cachedOptionsOriginal: originals.cachedOptions, ownershipVerified: expected.ownershipVerified)
         }
         if let record {
             guard record.source == .device, record.deviceID == deviceID, edited.matchesIdentity(expected.document) else {
@@ -478,7 +494,7 @@ actor GestaltFileStore {
             var baseline = expected
             let saved = try loadOriginals(for: expected.document)
             baseline.originals.merge(saved.fields) { _, saved in saved }
-            if let audio = saved.faceTimeAudio { baseline.faceTimeAudioOriginal = audio }
+            if let audio = saved.cachedOptions { baseline.cachedOptionsOriginal = audio }
             var originals = baseline.recordingOriginals(to: edited)
             // Explicitly removing a user-confirmed added field also corrects
             // old zero/one residues whose earlier origin was not recorded.
@@ -496,7 +512,7 @@ actor GestaltFileStore {
                 let readback = try Data(contentsOf: deviceURL)
                 guard try edited.matches(GestaltDocument(data: readback)) else { throw GestaltFailure("The write did not match the readback.") }
                 eventSink("Readback: verified")
-                return DocumentSnapshot(data: readback, document: edited, source: .device, name: expected.name, originals: originals.fields, faceTimeAudioOriginal: originals.faceTimeAudio)
+                return DocumentSnapshot(data: readback, document: edited, source: .device, name: expected.name, originals: originals.fields, cachedOptionsOriginal: originals.cachedOptions)
             } catch {
                 eventSink("Write/readback failed: " + error.localizedDescription)
                 eventSink("Recovery: restoring previous bytes")

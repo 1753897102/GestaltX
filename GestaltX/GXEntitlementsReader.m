@@ -113,7 +113,8 @@ static NSArray *GXEffectiveGroups(void) {
     }
     return nil;
 }
-+ (NSString *)usableAppGroup {
++ (NSString *)usableAppGroup { return [self usableAppGroups].firstObject; }
++ (NSArray<NSString *> *)usableAppGroups {
     NSArray *groups = GXEffectiveGroups();
     if (groups) {
         GXLog([NSString stringWithFormat:@"effective signature contains %lu group(s)", (unsigned long)groups.count]);
@@ -127,20 +128,25 @@ static NSArray *GXEffectiveGroups(void) {
         GXLog([NSString stringWithFormat:@"dyld main-image signature contains %lu group(s)", (unsigned long)groups.count]);
     }
     NSMutableOrderedSet<NSString *> *candidates = [NSMutableOrderedSet orderedSet];
-    NSString *bundleGroup = [@"group." stringByAppendingString:NSBundle.mainBundle.bundleIdentifier ?: @""];
+    NSBundle *bundle = NSBundle.mainBundle;
+    if ([bundle.bundleURL.pathExtension isEqualToString:@"appex"]) {
+        NSURL *parent = bundle.bundleURL.URLByDeletingLastPathComponent.URLByDeletingLastPathComponent;
+        bundle = [NSBundle bundleWithURL:parent] ?: bundle;
+    }
+    NSString *bundleGroup = [@"group." stringByAppendingString:bundle.bundleIdentifier ?: @""];
     for (NSString *preferred in @[bundleGroup, @"group.com.huami.gestultx"]) {
         if ([groups containsObject:preferred]) [candidates addObject:preferred];
     }
-    for (id group in groups) {
+    for (id group in [groups sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        return [[a description] compare:[b description]];
+    }]) {
         if ([group isKindOfClass:NSString.class] && [group hasPrefix:@"group."]) [candidates addObject:group];
     }
+    NSMutableArray<NSString *> *usable = [NSMutableArray array];
     for (NSString *candidate in candidates) {
-        if ([[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:candidate]) {
-            GXLog(@"selected a signed App Group with an accessible container");
-            return candidate;
-        }
+        if ([[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:candidate]) [usable addObject:candidate];
     }
-    GXLog(@"no signed App Group has an accessible container");
-    return nil;
+    GXLog(usable.count ? @"selected accessible signed App Groups" : @"no signed App Group has an accessible container");
+    return usable;
 }
 @end

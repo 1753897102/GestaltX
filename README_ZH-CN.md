@@ -4,7 +4,7 @@
 
 <h1 align="center">GestaltX</h1>
 
-[![Version](https://img.shields.io/badge/version-1.0.2-blue)](https://github.com/huamidev/GestaltX)
+[![Version](https://img.shields.io/badge/version-1.0.3-blue)](https://github.com/huamidev/GestaltX)
 [![Platform](https://img.shields.io/badge/iOS-27.x-black?logo=apple)](#兼容性)
 [![SwiftUI](https://img.shields.io/badge/Swift-SwiftUI-orange?logo=swift)](https://github.com/huamidev/GestaltX)
 [![License](https://img.shields.io/badge/license-GPLv3-blue)](LICENSE)
@@ -18,7 +18,7 @@
 | 分类 | 预设与工具 |
 | --- | --- |
 | 显示 | 灵动岛功能标记与布局、全天候显示、AOD 色彩、液态玻璃低性能渲染 |
-| 设备 | 机型名称、开关机提示音、充电上限、轻点唤醒、相机控制设置、操作按钮设置、实验性解除国行限制（eSIM、FaceTime 音频 27.3） |
+| 设备 | 机型名称、开关机提示音、充电上限、轻点唤醒、相机控制设置、操作按钮设置 |
 | iPad | Apple Pencil 设置、台前调度功能标记、iPad 应用兼容性 |
 | 智能 | 独立的地区代码选项、Apple 智能功能标记及销售地区选项；国行设备可尝试开启 AI |
 | 高级 | Apple 内部功能标记、内部存储视图、安全研究设备标记 |
@@ -39,15 +39,15 @@
 
 支持 **iOS / iPadOS 27.x**。**iOS / iPadOS 26.x 不支持本机 MobileGestalt 访问。** 基于 [worse_query](https://github.com/forcequitOS/worse_query)。SystemGroup 访问需要 iOS 27，功能可用性因设备与系统而异，同时支持本地 plist 编辑。
 
-签名所用的证书及描述文件必须提供至少一个可用的 App Group。GestaltX 会在运行时读取实际签名中的 App Group，以兼容重签。
+签名所用的证书及描述文件必须提供至少一个可用的 App Group。主应用和内置分享扩展必须签入至少一个**相同的 App Group**，重签时请保留分享扩展。两者均会在运行时读取实际签名中的 App Group。
 
-## 解除国行限制
+## 导入 plist
 
-在“设备” → “预设”中选择**解除国行限制**，可尝试解除 eSIM、FaceTime 音频（27.3）等功能限制，不修改销售地区。仍需硬件与运营商支持，不保证所有功能都可用。偏移会从设备自身的 MobileGestalt 系统库自动解析，不按机型或系统版本限制入口。写入前会核对缓存 UUID、长度、有效位及目标数值，无法解析时不会写入。查看更改前后的值，应用后请重新启动设备。
+在“文件”或其他 App 中选中 MobileGestalt plist，点击**分享**，再选择 **GestaltX**。分享扩展会直接读取收到的文件，并通过共同的 App Group 交给主应用。如未自动打开，请返回 GestaltX。应用会验证 GestaltX 导出文件的本机凭证，或将文件中的至少两个唯一设备标识与本机信息比对，通过后弹窗确认导入。无法核验的文件均拒绝导入，不会把之前导入的文件当成本机身份依据。
 
-本机应用前会保存原值，点击“还原”可单独恢复这两个标记，重新打开应用后仍可还原。已修改过的设备以最早记录的原值为准，不推测出厂值。
+部分原始 plist 不含唯一设备标识，请先在本机通过 GestaltX 导出一份副本。校验密钥只保存在本机钥匙串，不随文件导出。
 
-原始思路来自 [KirbySD 的 V2EX 帖子](https://www.v2ex.com/t/1246550)。
+应用会在启动和回到前台时检查分享文件。当前有未保存更改时，会等待你保存或放弃后再导入。确认导入的文件作为本地文档打开。“**MG 控制**”支持新增、修改、重命名和删除不同类型的键值。点击“**恢复导入的 plist**”可将已核验的文件恢复到本机；恢复时会核对系统缓存布局，经过二次确认后先备份当前文件，再写入并验证。完成后请重启设备。
 
 ## 语言支持
 

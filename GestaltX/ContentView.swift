@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2026 huamidev
 import SwiftUI
-import UniformTypeIdentifiers
 
 struct SharedFile: Identifiable { let id = UUID(); let url: URL }
 
 struct ContentView: View {
     @StateObject private var model = GestaltManager()
-    @State private var importsFile = false
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var importOffer: PlistImportOffer?
+    @State private var showsImportConfirmation = false
+    @State private var isCheckingSharedImport = false
+    @State private var pendingSharedImport = false
     @State private var sharesFile: SharedFile?
     @State private var showsChanges = false
     @State private var asksRespring = false
+    @State private var asksImportedRestore = false
+    @State private var showsShareNotice = false
+    @AppStorage("GestaltX.sharedImportNotice.v1") private var sharedImportNoticeShown = false
     @State private var selectedTab = 0
     @State private var didStart = false
     @State private var didAutoRead = false
@@ -24,7 +30,7 @@ struct ContentView: View {
             NavigationStack { tools }
                 .tabItem { Label(L("Tools"), systemImage: "square.grid.2x2") }.tag(0)
             NavigationStack { FieldsView() }
-                .tabItem { Label(L("Fields"), systemImage: "slider.horizontal.3") }.tag(1)
+                .tabItem { Label(L("MG Control"), systemImage: "slider.horizontal.3") }.tag(1)
             NavigationStack { BackupsView(share: { sharesFile = SharedFile(url: $0) }) }
                 .tabItem { Label(L("Backups"), systemImage: "clock.arrow.circlepath") }.tag(2)
             NavigationStack { AboutView() }
@@ -37,12 +43,6 @@ struct ContentView: View {
             NavigationStack { CategoryView(category: category) }.environmentObject(model)
         }
         #endif
-        .fileImporter(isPresented: $importsFile, allowedContentTypes: [.propertyList, .xml, .data]) { result in
-            switch result {
-            case .success(let url): Task { await model.open(url) }
-            case .failure(let error): model.message = error.localizedDescription
-            }
-        }
         .sheet(isPresented: Binding(get: { !acceptedWelcome && !isPreviewSession }, set: { _ in })) {
             WelcomeView { acceptedWelcome = true }
         }
@@ -56,8 +56,62 @@ struct ContentView: View {
             Button(L("Cancel"), role: .cancel) {}
             Button(L("Respring")) { model.isRespringing = true }
         } message: { Text(L("This will attempt to restart SpringBoard using NeoSpring.")) }
+        .alert(L("Import Plist"), isPresented: $showsImportConfirmation) {
+            Button(L("Cancel"), role: .cancel) {
+                if let offer = importOffer { model.discardImport(offer) }
+                importOffer = nil
+            }
+            Button(L("Import")) {
+                guard let offer = importOffer else { return }
+                isCheckingSharedImport = true
+                importOffer = nil
+                Task {
+                    await model.acceptImport(offer)
+                    isCheckingSharedImport = false
+                }
+            }
+        } message: {
+            Text(verbatim: (importOffer?.name ?? "") + "\n\n" + L("This plist has been verified for this device. Import it?"))
+        }
+        .alert(L("Restore Imported Plist"), isPresented: $asksImportedRestore) {
+            Button(L("Cancel"), role: .cancel) {}
+            Button(L("Restore"), role: .destructive) { Task { await model.restoreImportedPlist() } }
+        } message: {
+            Text(L("The current device file will be backed up before restoring. Restart the device afterward."))
+        }
+        .alert(L("Import Plist"), isPresented: $showsShareNotice) {
+            Button(L("OK"), role: .cancel) {}
+        } message: {
+            Text(L("Share this device's plist to GestaltX to edit its keys and values or restore a verified backup. Export a copy from GestaltX first to keep a device-bound proof."))
+        }
+        .onOpenURL { url in
+            if url.scheme?.lowercased() == "gestaltx", url.host == "share" {
+                Task { await checkSharedImport() }
+            } else if url.isFileURL {
+                guard !model.isBusy, model.changeCount == 0 else {
+                    model.message = L("Save or discard your current changes before opening another plist.")
+                    return
+                }
+                Task {
+                    importOffer = await model.prepareFileImport(url)
+                    if importOffer != nil { selectedTab = 0; showsImportConfirmation = true }
+                }
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active && !isPreviewSession { Task { await checkSharedImport() } }
+        }
+        .onChange(of: model.isBusy) { _, busy in
+            if !busy && pendingSharedImport { Task { await checkSharedImport() } }
+        }
+        .onChange(of: model.changeCount) { _, count in
+            if count == 0 && pendingSharedImport { Task { await checkSharedImport() } }
+        }
+        .onChange(of: showsChanges) { _, shown in
+            if !shown && pendingSharedImport { Task { await checkSharedImport() } }
+        }
         .onChange(of: acceptedWelcome) { _, accepted in
-            if accepted && !isPreviewSession { Task { await autoRead() } }
+            if accepted && !isPreviewSession { Task { await autoRead(); showShareNoticeIfNeeded() } }
         }
         .task {
             guard !didStart else { return }
@@ -72,18 +126,18 @@ struct ContentView: View {
                 selectedTab = tab
             }
             if arguments.contains("--preview-review") {
-                if !arguments.contains("--preview-facetime-audio") { model.choices["pencil"] = .enable }
+                if !arguments.contains("--preview-cache-option") { model.choices["pencil"] = .enable }
                 showsChanges = true
             }
-            if arguments.contains("--preview-facetime-audio") {
-                model.stageFaceTimeAudio(.enable)
+            if arguments.contains("--preview-cache-option") {
+                model.stageCacheOption(.enable)
             }
             if let flag = arguments.firstIndex(of: "--preview-category"), arguments.indices.contains(flag + 1) {
                 previewCategory = CapabilityCategory(rawValue: arguments[flag + 1])
             }
             if arguments.contains("--preview-document") || arguments.contains("--preview-tab") { return }
             #endif
-            if acceptedWelcome { await autoRead() }
+            if acceptedWelcome { await autoRead(); showShareNoticeIfNeeded() }
         }
     }
 
@@ -99,7 +153,46 @@ struct ContentView: View {
     private func autoRead() async {
         guard !didAutoRead else { return }
         didAutoRead = true
+        if await checkSharedImport() || model.hasDocument { return }
         await model.connect(showErrorAlert: false)
+    }
+
+    @discardableResult
+    private func checkSharedImport() async -> Bool {
+        guard acceptedWelcome else { return false }
+        guard !isCheckingSharedImport, importOffer == nil else { return true }
+        do {
+            guard let (inbox, entry) = try SharedAppGroups.oldestEntry() else {
+                pendingSharedImport = false
+                return false
+            }
+            guard !model.isBusy, model.changeCount == 0, !showsChanges, !model.isRespringing else {
+                let firstNotice = !pendingSharedImport
+                pendingSharedImport = true
+                if model.changeCount > 0 && firstNotice {
+                    model.message = L("A shared plist is waiting. Save or discard your current changes, then import it.")
+                }
+                return true
+            }
+            pendingSharedImport = false
+            isCheckingSharedImport = true
+            defer { isCheckingSharedImport = false }
+            selectedTab = 0
+            sharedImportNoticeShown = true
+            importOffer = await model.prepareSharedPlist(entry, from: inbox)
+            if importOffer != nil { showsImportConfirmation = true }
+            return true
+        } catch {
+            model.message = error.localizedDescription
+            return true
+        }
+    }
+
+    private func showShareNoticeIfNeeded() {
+        guard !sharedImportNoticeShown, acceptedWelcome, !isPreviewSession,
+              importOffer == nil, model.message == nil, !pendingSharedImport else { return }
+        sharedImportNoticeShown = true
+        showsShareNotice = true
     }
 
     private var tools: some View {
@@ -116,8 +209,6 @@ struct ContentView: View {
                 Button { Task { await model.connect() } } label: {
                     Label(L(model.isBusy ? "Reading…" : model.hasDocument ? "Read Again" : "Read MobileGestalt"), systemImage: "arrow.clockwise")
                 }.disabled(model.isBusy || model.changeCount > 0)
-                Button { importsFile = true } label: { Label(L("Import Plist"), systemImage: "doc.badge.plus") }
-                    .disabled(model.isBusy || model.changeCount > 0)
             }
             Section("MobileGestalt") {
                 ForEach(CapabilityCategory.allCases) { category in
@@ -128,6 +219,10 @@ struct ContentView: View {
                 }
             }
             Section(L("Actions")) {
+                if model.snapshot?.source == .local && model.snapshot?.ownershipVerified == true {
+                    Button { asksImportedRestore = true } label: { Label(L("Restore Imported Plist"), systemImage: "arrow.uturn.backward") }
+                        .disabled(!model.canRestoreImportedPlist)
+                }
                 Button { showsChanges = true } label: {
                     HStack {
                         Label(L("Apply Changes"), systemImage: "checkmark")
@@ -234,7 +329,7 @@ struct CategoryView: View {
                     }
                     }
                 }
-                if category == .device { FaceTimeAudioPresetRow() }
+                if category == .device && model.additionalOptionsUnlocked { AdditionalOptionsRow() }
             } header: {
                 Text(L("Presets"))
             }
@@ -249,13 +344,13 @@ struct CategoryView: View {
     }
 }
 
-struct FaceTimeAudioPresetRow: View {
+struct AdditionalOptionsRow: View {
     @EnvironmentObject private var model: GestaltManager
 
-    private var support: Result<FaceTimeAudioFlags, Error> {
+    private var support: Result<CachedOptionFlags, Error> {
         Result {
             guard let document = model.preview else { throw GestaltFailure("Load a document first.") }
-            return try FaceTimeAudioCache.flags(in: document)
+            return try DeviceCacheOptions.flags(in: document)
         }
     }
 
@@ -263,29 +358,29 @@ struct FaceTimeAudioPresetRow: View {
         switch support {
         case .success:
             VStack(alignment: .leading, spacing: 8) {
-                Picker(L("Remove Mainland China Restrictions"), selection: Binding(
-                    get: { model.faceTimeAudioChoice },
-                    set: { model.stageFaceTimeAudio($0) }
+                Picker(L("Additional Options"), selection: Binding(
+                    get: { model.cacheOptionChoice },
+                    set: { model.stageCacheOption($0) }
                 )) {
-                    ForEach(FaceTimeAudioChoice.allCases) { choice in
+                    ForEach(CacheOptionChoice.allCases) { choice in
                         Text(choice.title).tag(choice)
                     }
                 }
                 .pickerStyle(.menu)
-                .accessibilityIdentifier("facetime-audio-choice")
-                Text(L("Try enabling eSIM, FaceTime Audio (27.3), and other region-restricted features. Hardware and carrier support are required. Restart after applying."))
+                .accessibilityIdentifier("cache-option-choice")
+                Text(L("Some changes require a device restart."))
                     .font(.caption).foregroundStyle(.secondary)
                 HStack(alignment: .firstTextBaseline) {
                     Spacer(minLength: 8)
-                    Button(L("Revert")) { Task { await model.restoreFaceTimeAudio() } }
+                    Button(L("Revert")) { Task { await model.restoreCacheOption() } }
                         .font(.caption).buttonStyle(.borderless)
-                        .disabled(!model.canRestoreFaceTimeAudio)
-                        .accessibilityIdentifier("facetime-audio-revert")
+                        .disabled(!model.canRestoreCacheOption)
+                        .accessibilityIdentifier("cache-option-revert")
                 }
             }
         case .failure(let error):
             VStack(alignment: .leading, spacing: 4) {
-                LabeledContent(L("Remove Mainland China Restrictions")) { Text(L("Unsupported")).foregroundStyle(.secondary) }
+                LabeledContent(L("Additional Options")) { Text(L("Unsupported")).foregroundStyle(.secondary) }
                 Text(error.localizedDescription).font(.caption).foregroundStyle(.secondary)
             }
         }
@@ -311,7 +406,7 @@ struct FieldsView: View {
     var body: some View {
         List {
             if !model.hasDocument {
-                ContentUnavailableView(L("No Document Open"), systemImage: "doc.text.magnifyingglass", description: Text(L("Read or import a plist in Tools.")))
+                ContentUnavailableView(L("No Document Open"), systemImage: "doc.text.magnifyingglass", description: Text(L("Read MobileGestalt in Tools, or share this device's plist to GestaltX.")))
             } else {
                 Section {
                     ForEach(keys, id: \.self) { key in
@@ -337,7 +432,7 @@ struct FieldsView: View {
                 if keys.isEmpty { ContentUnavailableView.search(text: search) }
             }
         }
-        .navigationTitle(L("Fields"))
+        .navigationTitle(L("MG Control"))
         .searchable(text: $search, prompt: L("Search keys and values"))
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

@@ -50,9 +50,9 @@ final class AccessTrace: @unchecked Sendable {
     static func verifyDynamicCacheLayout() throws {
         let uuid = "A4A4A4A4-1111-2222-3333-123456789ABC"
         let address: UInt64 = 0x180100000
-        let keys = ["AAAAAAAAAAAAAAAAAAAAAA", FaceTimeAudioCache.greenTeaKey,
+        let keys = ["AAAAAAAAAAAAAAAAAAAAAA", DeviceCacheOptions.greenTeaKey,
                     "BBBBBBBBBBBBBBBBBBBBBB", "CCCCCCCCCCCCCCCCCCCCCC",
-                    FaceTimeAudioCache.notGreenTeaKey, "DDDDDDDDDDDDDDDDDDDDDD"]
+                    DeviceCacheOptions.notGreenTeaKey, "DDDDDDDDDDDDDDDDDDDDDD"]
         var strings = Data((uuid + "\0").utf8)
         var pointers: [UInt64] = []
         for key in keys { pointers.append(address + UInt64(strings.count)); strings.append(contentsOf: (key + "\0").utf8) }
@@ -81,10 +81,10 @@ final class AccessTrace: @unchecked Sendable {
             "CacheUUID": uuid, "CacheData": cache, "CacheExtra": [GestaltKeys.regionCode: "CH"]
         ], format: .binary, options: 0))
         var edited = original
-        try edited.setFaceTimeAudio(.enabled, using: layout)
-        try FaceTimeAudioCache.validateEdit(from: original, to: edited, using: layout)
-        try expect(FaceTimeAudioCache.flags(in: edited, using: layout) == .enabled, "Write the dynamically located target bytes")
-        try edited.setFaceTimeAudio(.restricted, using: layout)
+        try edited.setCacheOptions(.enabled, using: layout)
+        try DeviceCacheOptions.validateEdit(from: original, to: edited, using: layout)
+        try expect(DeviceCacheOptions.flags(in: edited, using: layout) == .enabled, "Write the dynamically located target bytes")
+        try edited.setCacheOptions(.restricted, using: layout)
         try expect(edited.matches(original), "Restore dynamic flags without changing other cache bytes or region fields")
         var ambiguous = descriptors
         ambiguous.append(descriptors.subdata(in: 64..<128))
@@ -107,7 +107,7 @@ final class AccessTrace: @unchecked Sendable {
                                                   stringAddress: address, constants: [descriptors])
         }
         let invalid = MobileGestaltCacheLayout(uuid: uuid, slotCount: 6, greenTeaIndex: 99, notGreenTeaIndex: 4)
-        try expectThrows("Reject invalid resolved offsets before indexing data") { _ = try FaceTimeAudioCache.validatedData(in: original, using: invalid) }
+        try expectThrows("Reject invalid resolved offsets before indexing data") { _ = try DeviceCacheOptions.validatedData(in: original, using: invalid) }
         // Optional local-only image/export fixtures are never copied into the repo.
         if let imagePath = ProcessInfo.processInfo.environment["GX_TEST_MG_IMAGE"] {
             let image = try PropertyListSerialization.propertyList(from: Data(contentsOf: URL(fileURLWithPath: imagePath)), options: [], format: nil) as! [String: Any]
@@ -117,11 +117,11 @@ final class AccessTrace: @unchecked Sendable {
             if let exportPath = ProcessInfo.processInfo.environment["GX_TEST_MG_EXPORT"] {
                 let url = URL(fileURLWithPath: exportPath), bytes = try Data(contentsOf: url)
                 let original = try GestaltDocument(data: bytes)
-                let flags = try FaceTimeAudioCache.flags(in: original, using: actual)
+                let flags = try DeviceCacheOptions.flags(in: original, using: actual)
                 var edited = original
-                try edited.setFaceTimeAudio(.enabled, using: actual)
-                try FaceTimeAudioCache.validateEdit(from: original, to: edited, using: actual)
-                try edited.setFaceTimeAudio(flags, using: actual)
+                try edited.setCacheOptions(.enabled, using: actual)
+                try DeviceCacheOptions.validateEdit(from: original, to: edited, using: actual)
+                try edited.setCacheOptions(flags, using: actual)
                 try expect(edited.matches(original), "Actual exported cache round-trips exact original flags with dynamic offsets")
                 try expect(try Data(contentsOf: url) == bytes, "The owner's exported file remains untouched")
             }
@@ -129,7 +129,7 @@ final class AccessTrace: @unchecked Sendable {
         print("PASS: dynamic query-table offsets, PAC pointers, layout sizing, UUID matching, ambiguity rejection and exact-byte restoration.")
     }
 
-    static func verifyFaceTimeAudio(in root: URL) async throws {
+    static func verifyCachedOptions(in root: URL) async throws {
         var cache = Data(repeating: 0, count: 6480)
         cache[0xBF8] = 1
         cache[0x17FF] = 1
@@ -146,8 +146,8 @@ final class AccessTrace: @unchecked Sendable {
         }
         func verifyOnlyTargetBytes(_ original: GestaltDocument) throws -> GestaltDocument {
             var enabled = original
-            try enabled.setFaceTimeAudio(.enabled)
-            try FaceTimeAudioCache.validateEdit(from: original, to: enabled)
+            try enabled.setCacheOptions(.enabled)
+            try DeviceCacheOptions.validateEdit(from: original, to: enabled)
             let before = original.root["CacheData"] as! Data
             let after = enabled.root["CacheData"] as! Data
             let changed = before.indices.filter { before[$0] != after[$0] }
@@ -157,53 +157,53 @@ final class AccessTrace: @unchecked Sendable {
             expectedCache[0xBF8] = 0; expectedCache[0xFD0] = 1
             expected["CacheData"] = expectedCache
             try expect(GestaltDocument.valuesEqual(enabled.root, expected), "All other root values, CacheExtra, regions and validity bytes remain intact")
-            try expect(FaceTimeAudioCache.changes(from: original, to: enabled).count == 2, "CacheData-only changes are counted")
-            try expect(FaceTimeAudioCache.flags(in: enabled) == .enabled, "Enabled flags are readable")
+            try expect(DeviceCacheOptions.changes(from: original, to: enabled).count == 2, "CacheData-only changes are counted")
+            try expect(DeviceCacheOptions.flags(in: enabled) == .enabled, "Enabled flags are readable")
             try expect(try document(expected).matches(GestaltDocument(data: enabled.encoded())), "Cache edit preserves types through binary plist encoding")
             var repeated = enabled
-            try repeated.setFaceTimeAudio(.enabled)
-            try expect(FaceTimeAudioCache.changes(from: enabled, to: repeated).isEmpty, "Enable is idempotent")
-            try repeated.setFaceTimeAudio(.restricted)
+            try repeated.setCacheOptions(.enabled)
+            try expect(DeviceCacheOptions.changes(from: enabled, to: repeated).isEmpty, "Enable is idempotent")
+            try repeated.setCacheOptions(.restricted)
             try expect(repeated.matches(original), "Restore restriction returns the complete original document")
             return enabled
         }
         let original = try document(fixture)
         let enabled = try verifyOnlyTargetBytes(original)
         var invalidLayout = fixture; invalidLayout["CacheUUID"] = "different-layout"
-        try expectThrows("Reject a different cache layout") { var doc = try document(invalidLayout); try doc.setFaceTimeAudio(.enabled) }
+        try expectThrows("Reject a different cache layout") { var doc = try document(invalidLayout); try doc.setCacheOptions(.enabled) }
         for version in ["24C9999", "another-build", ""] {
             var alternate = fixture; alternate["CacheVersion"] = version
             alternate["CacheExtra"] = [GestaltKeys.productType: "another-model"]
             let alternateDocument = try document(alternate)
             var edited = alternateDocument
-            try edited.setFaceTimeAudio(.enabled)
-            try FaceTimeAudioCache.validateEdit(from: alternateDocument, to: edited)
-            try expect(FaceTimeAudioCache.flags(in: edited) == .enabled, "Matching layouts are accepted regardless of model and build")
-            let saved = try FaceTimeAudioOriginal(document: alternateDocument)
+            try edited.setCacheOptions(.enabled)
+            try DeviceCacheOptions.validateEdit(from: alternateDocument, to: edited)
+            try expect(DeviceCacheOptions.flags(in: edited) == .enabled, "Matching layouts are accepted regardless of model and build")
+            let saved = try CachedOptionsOriginal(document: alternateDocument)
             try expect(saved.flags(in: original) == .restricted, "Restoration uses layout identity, not model or OS version")
         }
         var noVersion = fixture; noVersion.removeValue(forKey: "CacheVersion")
         noVersion["CacheExtra"] = [String: Any]()
         var noMetadata = try document(noVersion)
-        let noMetadataOriginal = try FaceTimeAudioOriginal(document: noMetadata)
-        try noMetadata.setFaceTimeAudio(.enabled)
+        let noMetadataOriginal = try CachedOptionsOriginal(document: noMetadata)
+        try noMetadata.setCacheOptions(.enabled)
         try expect(noMetadataOriginal.flags(in: noMetadata) == .restricted, "Missing model/build metadata does not block edit or restore")
         for (offset, value) in [(0x17FF, UInt8(0)), (0x187A, 0), (0xBF8, 2), (0xFD1, 1)] {
             var invalid = fixture; var bytes = cache; bytes[offset] = value; invalid["CacheData"] = bytes
-            try expectThrows("Reject invalid flags, validity or slot padding") { var doc = try document(invalid); try doc.setFaceTimeAudio(.enabled) }
+            try expectThrows("Reject invalid flags, validity or slot padding") { var doc = try document(invalid); try doc.setCacheOptions(.enabled) }
         }
         var truncated = fixture; truncated["CacheData"] = Data(cache.dropLast())
-        try expectThrows("Reject a truncated cache") { var doc = try document(truncated); try doc.setFaceTimeAudio(.enabled) }
-        for key in [FaceTimeAudioCache.greenTeaKey, FaceTimeAudioCache.notGreenTeaKey, "green-tea", "not-green-tea"] {
+        try expectThrows("Reject a truncated cache") { var doc = try document(truncated); try doc.setCacheOptions(.enabled) }
+        for key in [DeviceCacheOptions.greenTeaKey, DeviceCacheOptions.notGreenTeaKey, "green-tea", "not-green-tea"] {
             var conflicting = original; conflicting.set(false, for: key)
-            try expectThrows("Reject conflicting CacheExtra fields") { try conflicting.setFaceTimeAudio(.enabled) }
+            try expectThrows("Reject conflicting CacheExtra fields") { try conflicting.setCacheOptions(.enabled) }
         }
         var tampered = fixture; var unrelated = cache; unrelated[17] = 94; tampered["CacheData"] = unrelated
         try expectThrows("Reject changes to unrelated cache bytes at commit validation") {
-            try FaceTimeAudioCache.validateEdit(from: original, to: document(tampered))
+            try DeviceCacheOptions.validateEdit(from: original, to: document(tampered))
         }
         var changedModel = enabled; changedModel.set("iPhone18,2", for: GestaltKeys.productType)
-        try FaceTimeAudioCache.validateEdit(from: original, to: changedModel)
+        try DeviceCacheOptions.validateEdit(from: original, to: changedModel)
         try expect(changedModel.extra[GestaltKeys.productType] as? String == "iPhone18,2", "A staged model change no longer blocks cache edits")
         var pending = enabled
         pending.set("pending", for: "unrelated-pending")
@@ -211,14 +211,14 @@ final class AccessTrace: @unchecked Sendable {
         var restoredOtherField = original
         restoredOtherField.set("restored", for: "other-preset")
         let rebased = baseline.rebasingPendingEdits(pending, onto: restoredOtherField, excluding: ["other-preset"])
-        try expect(FaceTimeAudioCache.flags(in: rebased) == .enabled, "Restoring an unrelated preset retains staged FaceTime flags")
+        try expect(DeviceCacheOptions.flags(in: rebased) == .enabled, "Restoring an unrelated preset retains staged cache flags")
         try expect(rebased.extra["unrelated-pending"] as? String == "pending", "Rebase retains other staged fields")
         try expect(rebased.extra["other-preset"] as? String == "restored", "Rebase retains the just-restored preset")
-        let device = root.appendingPathComponent("facetime-device.plist")
+        let device = root.appendingPathComponent("cache-option-device.plist")
         let originalBytes = try original.encoded()
         try originalBytes.write(to: device)
-        let store = GestaltFileStore(deviceURL: device, backupDirectory: root.appendingPathComponent("facetime-backups"),
-                                    deviceID: "facetime-fixture", acquire: { 1 }, release: { _ in })
+        let store = GestaltFileStore(deviceURL: device, backupDirectory: root.appendingPathComponent("cache-option-backups"),
+                                    deviceID: "cache-option-fixture", acquire: { 1 }, release: { _ in })
         let snapshot = try await store.loadDevice()
         let committed = try await store.commit(enabled, expected: snapshot)
         try expect(committed.document.matches(enabled), "CacheData-only write passes full readback verification")
@@ -236,17 +236,17 @@ final class AccessTrace: @unchecked Sendable {
         try expect(try Data(contentsOf: device) == originalBytes, "Rejected cache edits never reach the system writer")
         // All valid Boolean pairs are possible baselines. Restoring must not
         // manufacture the mainland restriction pair on an already-modified file.
-        let pairs = [FaceTimeAudioFlags.restricted, .enabled,
-                     FaceTimeAudioFlags(greenTea: false, notGreenTea: false),
-                     FaceTimeAudioFlags(greenTea: true, notGreenTea: true)]
+        let pairs = [CachedOptionFlags.restricted, .enabled,
+                     CachedOptionFlags(greenTea: false, notGreenTea: false),
+                     CachedOptionFlags(greenTea: true, notGreenTea: true)]
         for (index, flags) in pairs.enumerated() {
             for mode in ["journal", "deleted-backups", "missing-journal", "legacy-journal"] {
-                let directory = root.appendingPathComponent("facetime-original-\(index)-" + mode)
+                let directory = root.appendingPathComponent("cache-option-original-\(index)-" + mode)
                 try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
                 let device = directory.appendingPathComponent("device.plist")
                 let backups = directory.appendingPathComponent("backups")
                 var baseline = original
-                try baseline.setFaceTimeAudio(flags)
+                try baseline.setCacheOptions(flags)
                 try baseline.encoded().write(to: device)
                 func makeStore() -> GestaltFileStore {
                     GestaltFileStore(deviceURL: device, backupDirectory: backups, deviceID: "audio-original-fixture",
@@ -254,19 +254,19 @@ final class AccessTrace: @unchecked Sendable {
                 }
                 let store = makeStore()
                 let initial = try await store.loadDevice()
-                try expect(initial.faceTimeAudioOriginal == nil, "Unknown history is not guessed")
-                try expect(initial.originalFaceTimeAudioFlags() == flags, "Unknown original uses the loaded baseline")
+                try expect(initial.cachedOptionsOriginal == nil, "Unknown history is not guessed")
+                try expect(initial.originalCachedOptionFlags() == flags, "Unknown original uses the loaded baseline")
                 var changed = initial.document
                 // Ensure a real edit even when the input already has enabled flags.
-                try changed.setFaceTimeAudio(flags == .enabled ? .restricted : .enabled)
+                try changed.setCacheOptions(flags == .enabled ? .restricted : .enabled)
                 changed.set("committed", for: "other-field")
                 let applied = try await store.commit(changed, expected: initial)
-                try expect(applied.originalFaceTimeAudioFlags() == flags, "Commit records the actual original pair")
+                try expect(applied.originalCachedOptionFlags() == flags, "Commit records the actual original pair")
                 // Repeated changes must never replace the earliest recorded state.
                 var secondEdit = applied.document
-                try secondEdit.setFaceTimeAudio(FaceTimeAudioFlags(greenTea: !flags.greenTea, notGreenTea: !flags.notGreenTea))
+                try secondEdit.setCacheOptions(CachedOptionFlags(greenTea: !flags.greenTea, notGreenTea: !flags.notGreenTea))
                 let second = try await store.commit(secondEdit, expected: applied)
-                try expect(second.originalFaceTimeAudioFlags() == flags, "Repeated writes retain the first original")
+                try expect(second.originalCachedOptionFlags() == flags, "Repeated writes retain the first original")
                 let journal = backups.appendingPathComponent("OriginalValues.plist")
                 if mode == "deleted-backups" {
                     for record in try await store.backups() { try await store.deleteBackup(record) }
@@ -279,35 +279,35 @@ final class AccessTrace: @unchecked Sendable {
                 }
                 let reopened = makeStore()
                 let loaded = try await reopened.loadDevice()
-                try expect(loaded.originalFaceTimeAudioFlags() == flags, "Reload and migration retain originals: " + mode)
+                try expect(loaded.originalCachedOptionFlags() == flags, "Reload and migration retain originals: " + mode)
                 if mode == "deleted-backups" {
                     let recreated = try await reopened.backups().first!
                     let saved = try GestaltDocument(data: await reopened.backupData(recreated))
-                    try expect(FaceTimeAudioCache.flags(in: saved) == flags, "Recreated initial backup contains saved original cache flags")
+                    try expect(DeviceCacheOptions.flags(in: saved) == flags, "Recreated initial backup contains saved original cache flags")
                 }
                 if mode == "missing-journal" || mode == "legacy-journal" {
                     for record in try await reopened.backups() { try await reopened.deleteBackup(record) }
                     let migrated = try await makeStore().loadDevice()
-                    try expect(migrated.originalFaceTimeAudioFlags() == flags, "Migrated originals remain after backups are deleted")
+                    try expect(migrated.originalCachedOptionFlags() == flags, "Migrated originals remain after backups are deleted")
                 }
                 var pending = loaded.document
-                try pending.setFaceTimeAudio(.enabled)
+                try pending.setCacheOptions(.enabled)
                 pending.set("pending", for: "pending-field")
                 var restored = loaded.document
-                try restored.setFaceTimeAudio(loaded.originalFaceTimeAudioFlags())
+                try restored.setCacheOptions(loaded.originalCachedOptionFlags())
                 let result = try await reopened.commit(restored, expected: loaded)
                 try expect(result.document.extra["other-field"] as? String == "committed", "One-cell restore leaves other applied fields intact")
                 let rebased = loaded.rebasingPendingEdits(pending, onto: result.document, excluding: [], preservingCacheData: false)
-                try expect(FaceTimeAudioCache.flags(in: rebased) == flags, "Reverting FaceTime discards only its staged cache edits")
-                try expect(rebased.extra["pending-field"] as? String == "pending", "Reverting FaceTime preserves unrelated pending edits")
+                try expect(DeviceCacheOptions.flags(in: rebased) == flags, "Reverting the preset discards only its staged cache edits")
+                try expect(rebased.extra["pending-field"] as? String == "pending", "Reverting the preset preserves unrelated pending edits")
                 let final = try await makeStore().loadDevice()
-                try expect(FaceTimeAudioCache.flags(in: final.document) == flags, "Exact original flags survive write and reopen")
+                try expect(DeviceCacheOptions.flags(in: final.document) == flags, "Exact original flags survive write and reopen")
                 var expected = baseline
                 expected.set("committed", for: "other-field")
                 try expect(final.document.matches(expected), "Restore touches only the two flag bytes")
             }
         }
-        let journal = root.appendingPathComponent("facetime-backups/OriginalValues.plist")
+        let journal = root.appendingPathComponent("cache-option-backups/OriginalValues.plist")
         let intactJournal = try Data(contentsOf: journal)
         var corruptJournal = try PropertyListSerialization.propertyList(from: intactJournal, options: [], format: nil) as! [String: Any]
         corruptJournal["faceTimeAudio"] = Data([0, 1, 2])
@@ -321,13 +321,13 @@ final class AccessTrace: @unchecked Sendable {
         try intactJournal.write(to: journal)
         let local = try await store.loadLocal(data: originalBytes, name: "local-fixture")
         let localEdit = try await store.commit(enabled, expected: local)
-        try expect(localEdit.originalFaceTimeAudioFlags() == .restricted, "Local sessions retain their own original flags")
+        try expect(localEdit.originalCachedOptionFlags() == .restricted, "Local sessions retain their own original flags")
         let otherLocal = try await store.loadLocal(data: enabled.encoded(), name: "unrelated-local")
-        try expect(otherLocal.faceTimeAudioOriginal == nil && otherLocal.originalFaceTimeAudioFlags() == .enabled,
+        try expect(otherLocal.cachedOptionsOriginal == nil && otherLocal.originalCachedOptionFlags() == .enabled,
                    "Newly opened files do not inherit another document's original flags")
         var foreignLayout = fixture
         foreignLayout["CacheUUID"] = "different-layout"
-        let savedOriginal = try FaceTimeAudioOriginal(document: original)
+        let savedOriginal = try CachedOptionsOriginal(document: original)
         try expectThrows("Saved originals cannot be reused with another layout") {
             _ = try savedOriginal.flags(in: document(foreignLayout))
         }
@@ -337,7 +337,7 @@ final class AccessTrace: @unchecked Sendable {
             _ = try verifyOnlyTargetBytes(GestaltDocument(data: bytes))
             try expect(try Data(contentsOf: url) == bytes, "Actual exported plist remains byte-for-byte untouched")
         }
-        print("PASS: FaceTime Audio exact-byte edits, profile rejection, unrelated-byte preservation, CacheData-only commit, backup, durable original-value recovery, isolated revert, and read-only export verification.")
+        print("PASS: cached options exact-byte edits, profile rejection, unrelated-byte preservation, CacheData-only commit, backup, durable original-value recovery, isolated revert, and read-only export verification.")
     }
 
     static func main() async throws {
@@ -346,7 +346,7 @@ final class AccessTrace: @unchecked Sendable {
         try fm.createDirectory(at: root, withIntermediateDirectories: true)
         defer { try? fm.removeItem(at: root) }
         try verifyDynamicCacheLayout()
-        try await verifyFaceTimeAudio(in: root)
+        try await verifyCachedOptions(in: root)
         let device = root.appendingPathComponent("device.plist")
         let backups = root.appendingPathComponent("backups", isDirectory: true)
         let original: [String: Any] = [

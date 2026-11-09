@@ -88,7 +88,7 @@ struct MobileGestaltCacheLayout: Codable, Equatable, Sendable {
                     let type = UInt32(littleEndian: raw.loadUnaligned(fromByteOffset: offset + 0x3C, as: UInt32.self))
                     guard (-1..<16384).contains(index), (1...11).contains(type) else { continue }
                     if index >= 0 { indices.insert(index) }
-                    if key == FaceTimeAudioCache.greenTeaKey || key == FaceTimeAudioCache.notGreenTeaKey {
+                    if key == DeviceCacheOptions.greenTeaKey || key == DeviceCacheOptions.notGreenTeaKey {
                         guard type == 11, index >= 0 else { throw failure }
                         targets[key, default: []].insert(index)
                         targetLocations[key, default: []].insert("\(sectionID):\(offset % 64)")
@@ -98,11 +98,11 @@ struct MobileGestaltCacheLayout: Codable, Equatable, Sendable {
         }
         guard let maximum = indices.max(), maximum >= 1,
               indices.count > (maximum + 1) / 2,
-              let green = targets[FaceTimeAudioCache.greenTeaKey], green.count == 1,
-              let notGreen = targets[FaceTimeAudioCache.notGreenTeaKey], notGreen.count == 1,
+              let green = targets[DeviceCacheOptions.greenTeaKey], green.count == 1,
+              let notGreen = targets[DeviceCacheOptions.notGreenTeaKey], notGreen.count == 1,
               let greenIndex = green.first, let notGreenIndex = notGreen.first, greenIndex != notGreenIndex,
-              let greenLocation = targetLocations[FaceTimeAudioCache.greenTeaKey], greenLocation.count == 1,
-              greenLocation == targetLocations[FaceTimeAudioCache.notGreenTeaKey] else { throw failure }
+              let greenLocation = targetLocations[DeviceCacheOptions.greenTeaKey], greenLocation.count == 1,
+              greenLocation == targetLocations[DeviceCacheOptions.notGreenTeaKey] else { throw failure }
         return Self(uuid: uuid, slotCount: maximum + 1, greenTeaIndex: greenIndex, notGreenTeaIndex: notGreenIndex)
     }
 }

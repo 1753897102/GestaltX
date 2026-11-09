@@ -4,7 +4,7 @@
 
 <h1 align="center">GestaltX</h1>
 
-[![Version](https://img.shields.io/badge/version-1.0.2-blue)](https://github.com/huamidev/GestaltX)
+[![Version](https://img.shields.io/badge/version-1.0.3-blue)](https://github.com/huamidev/GestaltX)
 [![Platform](https://img.shields.io/badge/iOS-27.x-black?logo=apple)](#compatibility)
 [![SwiftUI](https://img.shields.io/badge/Swift-SwiftUI-orange?logo=swift)](https://github.com/huamidev/GestaltX)
 [![License](https://img.shields.io/badge/license-GPLv3-blue)](LICENSE)
@@ -18,7 +18,7 @@ A MobileGestalt editor for iPhone and iPad. Developed by [huamidev](https://gith
 | Category | Presets and tools |
 | --- | --- |
 | Display | Dynamic Island capability and layout, Always-On Display, AOD Vibrancy, Liquid Glass low-power rendering |
-| Device | Model name, boot/shutdown chime, charge limit, tap to wake, Camera Control settings, Action Button settings, experimental removal of mainland China restrictions (eSIM, FaceTime Audio on 27.3) |
+| Device | Model name, boot/shutdown chime, charge limit, tap to wake, Camera Control settings, Action Button settings |
 | iPad | Apple Pencil settings, Stage Manager capability, iPad app compatibility |
 | Intelligence | Independent region-code options, Apple Intelligence capability flag, and sales-region options for activation attempts on China-mainland devices |
 | Advanced | Apple internal feature flags, internal storage view, Security Research Device flag |
@@ -39,15 +39,15 @@ Presets modify capability flags; actual effects depend on the device and OS. Chi
 
 Supports **iOS / iPadOS 27.x**. **iOS / iPadOS 26.x is not supported for on-device MobileGestalt access.** Powered by [worse_query](https://github.com/forcequitOS/worse_query). SystemGroup access requires iOS 27; available features depend on the device and OS. Local plist editing is also supported.
 
-Signing requires a certificate and provisioning profile with at least one usable App Group. GestaltX detects the signed App Group at runtime.
+Signing requires a certificate and provisioning profile with at least one usable App Group. Sign the app and its embedded share extension with at least one **common App Group**, and keep the extension when re-signing. Both processes detect their actual signed App Groups at runtime.
 
-## Mainland China restrictions
+## Import a plist
 
-Device → Presets → **Remove Mainland China Restrictions** attempts to enable eSIM, FaceTime Audio (27.3), and other region-restricted features without changing the sales region. Hardware and carrier support are still required; this does not guarantee every feature will work. Cache offsets are automatically resolved from the device’s own MobileGestalt library, with no model or OS version allowlist. The cache UUID, length, validity markers and target values are checked before editing. If the layout cannot be resolved, no changes are written. Review the changes, apply, and restart the device.
+In Files or another app, select a MobileGestalt plist, tap **Share**, and choose **GestaltX**. The share extension reads the supplied file and hands it to the app through the shared App Group. Return to GestaltX if it does not open automatically. The app checks a device-bound proof from a GestaltX export, or at least two unique identifiers obtained from this device, then asks you to confirm the import. Files that cannot be verified are rejected. Previously imported files are never used as the reference for device identity.
 
-On-device original values are saved before applying. Use **Revert** to restore only these two flags, including after reopening the app. Previously modified devices use their earliest recorded values, not an assumed factory default.
+Some original plists contain no unique device identifiers. Export a copy from GestaltX on this device first: its verification key stays in the device-only Keychain and is never included in the file.
 
-Original idea: [KirbySD's V2EX post](https://www.v2ex.com/t/1246550).
+Shared files are checked at launch and on return to the foreground. Pending edits are preserved until you save or discard them. Confirmed imports open as local documents. **MG Control** supports adding, editing, renaming and deleting typed keys and values. Use **Restore Imported Plist** to restore a verified file to this device; restoration requires a matching system cache layout and an additional confirmation, backs up the current file, and verifies the write. Restart the device afterward.
 
 ## Language support
 

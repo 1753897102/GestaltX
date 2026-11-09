@@ -46,7 +46,6 @@ Apply Changes	应用更改
 Respring Required	需要注销
 Log	日志
 Experimental settings. Back up before applying.	实验性设置，请在应用前备份。
-Read or import a plist in Tools.	在“工具”中读取或导入 plist。
 No Backups	暂无备份
 A backup is created before each write.	每次写入前会自动备份。
 This will attempt to restart SpringBoard using NeoSpring.	将通过 NeoSpring 尝试重新启动 SpringBoard。
@@ -56,7 +55,6 @@ GNU GPL v3	GNU GPL v3
 Date	日期
 Enter an ISO 8601 date, such as 2026-11-09T12:00:00Z.	请输入 ISO 8601 日期，例如 2026-11-09T12:00:00Z。
 Tools	工具
-Fields	字段
 Backups	备份
 About	关于
 GestaltX	GestaltX
@@ -297,12 +295,29 @@ Respring did not finish.	注销未完成。
 Refreshing SpringBoard…	正在刷新 SpringBoard…
 This OS build may not support the technique. You can close this screen and try a manual restart later.	当前系统版本可能不支持此方法。你可以关闭此页面，稍后手动重新启动设备。
 Your device may briefly return to the Lock Screen.	设备可能会短暂返回锁定屏幕。
-Remove Mainland China Restrictions	解除国行限制
-Try enabling eSIM, FaceTime Audio (27.3), and other region-restricted features. Hardware and carrier support are required. Restart after applying.	尝试解除 eSIM、FaceTime 音频（27.3）等功能限制，仍需硬件和运营商支持。应用后请重启。
 The cache layout or values do not match this preset.	缓存布局或数值与此预设不符。
 This preset changes unrelated cache bytes.	此预设更改了无关的缓存字节。
-Region restriction flags written and verified. Restart the device to apply.	地区限制标记已写入并验证，请重启设备使其生效。
 Unable to resolve this device's MobileGestalt cache layout.	无法解析此设备的 MobileGestalt 缓存布局。
+Importing Plist…	正在导入 plist…
+Share one MobileGestalt plist at a time.	请每次分享一个 MobileGestalt plist 文件。
+Sign GestaltX and its share extension with the same App Group, then try again.	请为 GestaltX 和分享扩展签入同一个 App Group 后重试。
+The shared plist could not be read. Share it again.	无法读取分享的 plist，请重新分享。
+A shared plist is waiting. Save or discard your current changes, then import it.	有分享的 plist 等待导入，请先保存或放弃当前更改。
+Save or discard your current changes before opening another plist.	请先保存或放弃当前更改，再打开另一个 plist。
+Import	导入
+Open GestaltX to confirm importing the plist.	请打开 GestaltX 确认导入 plist。
+This device's identity could not be verified. Read MobileGestalt on this device and try sharing again.	无法核验本机身份，请先读取本机 MobileGestalt 后重新分享。
+This plist belongs to another device and cannot be imported.	此 plist 的设备标识与本机不符，无法导入。
+This plist does not contain enough device identifiers to verify ownership.	此 plist 缺少足够的设备标识，无法确认属于本机。
+Additional Options	附加选项
+MG Control	MG 控制
+Read MobileGestalt in Tools, or share this device's plist to GestaltX.	在工具中读取 MobileGestalt，或将本机 plist 分享到 GestaltX。
+This plist has been verified for this device. Import it?	已核验此 plist 属于本机，是否导入？
+This plist's device proof could not be verified on this device.	无法在本机验证此 plist 的设备凭证。
+This plist uses a different system cache layout and cannot be restored.	此 plist 的系统缓存布局与本机不符，无法恢复。
+Restore Imported Plist	恢复导入的 plist
+The current device file will be backed up before restoring. Restart the device afterward.	恢复前会备份当前设备文件，完成后请重启设备。
+Share this device's plist to GestaltX to edit its keys and values or restore a verified backup. Export a copy from GestaltX first to keep a device-bound proof.	现在可将本机 plist 分享到 GestaltX，核验后导入、增删改键值并恢复。建议先从 GestaltX 导出一份带本机校验凭证的备份。
 '''
 entries = {}
 for line in TRANSLATIONS.strip().splitlines():

@@ -2,7 +2,7 @@
 // Cache offsets are resolved from the device library and matched to the plist layout.
 import Foundation
 
-enum FaceTimeAudioChoice: Int, CaseIterable, Identifiable {
+enum CacheOptionChoice: Int, CaseIterable, Identifiable {
     case keep, enable, restoreOriginal
     var id: Int { rawValue }
     var title: LocalizedStringResource {
@@ -14,7 +14,7 @@ enum FaceTimeAudioChoice: Int, CaseIterable, Identifiable {
     }
 }
 
-struct FaceTimeAudioFlags: Equatable, Codable, Sendable {
+struct CachedOptionFlags: Equatable, Codable, Sendable {
     let greenTea: Bool
     let notGreenTea: Bool
 
@@ -23,21 +23,21 @@ struct FaceTimeAudioFlags: Equatable, Codable, Sendable {
 }
 
 // Bind saved values to the cache layout; model and OS version are metadata only.
-struct FaceTimeAudioOriginal: Codable, Equatable, Sendable {
+struct CachedOptionsOriginal: Codable, Equatable, Sendable {
     let productType: String
     let build: String
     let layoutUUID: String
-    let flags: FaceTimeAudioFlags
+    let flags: CachedOptionFlags
 
     init(document: GestaltDocument) throws {
-        flags = try FaceTimeAudioCache.flags(in: document)
+        flags = try DeviceCacheOptions.flags(in: document)
         productType = document.extra[GestaltKeys.productType] as? String ?? ""
         build = document.root["CacheVersion"] as? String ?? ""
         layoutUUID = document.root["CacheUUID"] as? String ?? ""
     }
 
-    func flags(in document: GestaltDocument) throws -> FaceTimeAudioFlags {
-        _ = try FaceTimeAudioCache.validatedData(in: document)
+    func flags(in document: GestaltDocument) throws -> CachedOptionFlags {
+        _ = try DeviceCacheOptions.validatedData(in: document)
         guard document.root["CacheUUID"] as? String == layoutUUID else {
             throw GestaltFailure("The cache layout or values do not match this preset.")
         }
@@ -53,7 +53,7 @@ struct CachedBooleanChange: Identifiable {
     var id: Int { offset }
 }
 
-enum FaceTimeAudioCache {
+enum DeviceCacheOptions {
     static let greenTeaKey = "iyfxmLogGVIaH7aEgqwcIA"
     static let notGreenTeaKey = "4snMZS8LJkSctKypt2m+xA"
 
@@ -71,10 +71,10 @@ enum FaceTimeAudioCache {
         return data
     }
 
-    static func flags(in document: GestaltDocument, using resolvedLayout: MobileGestaltCacheLayout? = nil) throws -> FaceTimeAudioFlags {
+    static func flags(in document: GestaltDocument, using resolvedLayout: MobileGestaltCacheLayout? = nil) throws -> CachedOptionFlags {
         let layout = try resolvedLayout ?? MobileGestaltCacheLayout.resolve(in: document)
         let data = try validatedData(in: document, using: layout)
-        return FaceTimeAudioFlags(greenTea: data[layout.greenTeaOffset] == 1,
+        return CachedOptionFlags(greenTea: data[layout.greenTeaOffset] == 1,
                                   notGreenTea: data[layout.notGreenTeaOffset] == 1)
     }
 
