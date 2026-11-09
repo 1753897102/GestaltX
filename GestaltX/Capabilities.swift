@@ -79,7 +79,7 @@ struct RegionPreset: Identifiable {
     let info: String
     static let all: [Self] = [
         .init(id: "keep", title: "Keep Current", code: "", info: ""),
-        .init(id: "US", title: "United States", code: "US", info: "LL/A"),
+        .init(id: "US", title: "United States", code: "LL", info: "LL/A"),
         .init(id: "HK", title: "Hong Kong", code: "ZA", info: "ZA/A"),
         .init(id: "JP", title: "Japan", code: "J", info: "J/A"),
         .init(id: "CN", title: "China (Mainland)", code: "CH", info: "CH/A"),

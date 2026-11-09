@@ -114,6 +114,13 @@ struct GestaltDocument: @unchecked Sendable {
         for key in present.isEmpty ? [GestaltKeys.regionInfo] : present { set(salesSuffix, for: key) }
     }
 
+    mutating func applyRegion(salesRegion: RegionPreset?, regionCode: RegionPreset?) {
+        let sales = salesRegion.flatMap { $0.id == "keep" ? nil : $0 }
+        let standaloneCode = regionCode.flatMap { $0.id == "keep" ? nil : $0 }
+        guard let code = standaloneCode?.code ?? sales?.code else { return }
+        applyRegion(code: code, salesSuffix: sales?.info)
+    }
+
     mutating func setArtwork(_ value: Any, for key: String) {
         // Never replace an existing malformed artwork value and silently lose its data.
         var updated = artwork

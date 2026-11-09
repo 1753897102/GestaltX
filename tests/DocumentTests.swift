@@ -52,6 +52,30 @@ final class AccessTrace: @unchecked Sendable {
             for key in restoredSuffixKeys {
                 try expect(regionDocument.extra[key] as? String == "CH/A", "Sales-region restore retains the original suffix")
             }
+
+            let keep = RegionPreset.all.first { $0.id == "keep" }!
+            let china = RegionPreset.all.first { $0.id == "CN" }!
+            let us = RegionPreset.all.first { $0.id == "US" }!
+            try expect(us.code == "LL", "US uses Apple's LL region code")
+            for option in RegionPreset.all where option.id != "keep" {
+                var codeOnly = try GestaltDocument(data: data)
+                codeOnly.applyRegion(salesRegion: keep, regionCode: option)
+                var expectedExtra = fixture["CacheExtra"] as! [String: Any]
+                expectedExtra[GestaltKeys.regionCode] = option.code
+                var expectedRoot = fixture
+                expectedRoot["CacheExtra"] = expectedExtra
+                try expect(GestaltDocument.valuesEqual(codeOnly.root, expectedRoot), "Each region-code option preserves the sales suffix and unrelated fields")
+            }
+            var combined = try GestaltDocument(data: data)
+            for key in suffixKeys { combined.set("ZA/A", for: key) }
+            combined.applyRegion(salesRegion: china, regionCode: us)
+            try expect(combined.extra[GestaltKeys.regionCode] as? String == "LL", "Combined choices retain the independently selected region code")
+            for key in restoredSuffixKeys {
+                try expect(combined.extra[key] as? String == "CH/A", "Combined choices restore the sales suffix instead of retaining ZA/A")
+            }
+            var unchanged = try GestaltDocument(data: data)
+            unchanged.applyRegion(salesRegion: keep, regionCode: keep)
+            try expect(GestaltDocument.valuesEqual(unchanged.root, fixture), "Keeping both selections leaves all fields untouched")
         }
         try originalData.write(to: device)
         let trace = AccessTrace()

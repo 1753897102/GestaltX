@@ -1,6 +1,6 @@
 GestaltX — Third-Party Notices
 Copyright (C) 2026 huamidev
-https://github.com/huami1314
+https://github.com/huamidev
 
 GestaltX application code is licensed under GNU GPL version 3. The worse_query component retains its GPL-3.0-or-later terms. The complete GPL v3 text is included with the app and in LICENSE. No warranty is provided.
 

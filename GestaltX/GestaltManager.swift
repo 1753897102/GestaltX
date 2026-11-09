@@ -18,7 +18,7 @@ final class GestaltManager: ObservableObject {
     @Published var needsRespring = false
     @Published var choices: [String: PresetChoice] = [:]
     @Published var regionID = "keep"
-    @Published private(set) var regionCodeID = "keep"
+    @Published var regionCodeID = "keep"
     @Published var changesName = false
     @Published var modelName = ""
     @Published var subtype = 0
@@ -91,22 +91,9 @@ final class GestaltManager: ObservableObject {
             doc.set(modelName.trimmingCharacters(in: .whitespacesAndNewlines), for: "Z/dqyWS6OZTRy10UcmUAhw")
             doc.set(modelName.trimmingCharacters(in: .whitespacesAndNewlines), for: "bbtR9jQx50Fv5Af/affNtA")
         }
-        if regionCodeID == "LL" {
-            doc.applyRegion(code: "LL")
-        } else if let region = RegionPreset.all.first(where: { $0.id == regionID }), region.id != "keep" {
-            doc.applyRegion(code: region.code, salesSuffix: region.info)
-        }
+        doc.applyRegion(salesRegion: RegionPreset.all.first { $0.id == regionID },
+                        regionCode: RegionPreset.all.first { $0.id == regionCodeID })
         return doc
-    }
-
-    func selectRegionCode(_ value: String) {
-        regionCodeID = value
-        if value != "keep" { regionID = "keep" }
-    }
-
-    func selectSalesRegion(_ value: String) {
-        regionID = value
-        if value != "keep" { regionCodeID = "keep" }
     }
 
     private func log(_ text: String) {

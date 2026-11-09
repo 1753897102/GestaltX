@@ -185,9 +185,8 @@ struct CategoryView: View {
             }
             if category == .intelligence {
                 Section {
-                    Picker(L("Region Code"), selection: Binding(get: { model.regionCodeID }, set: model.selectRegionCode)) {
-                        Text(L("Keep Current")).tag("keep")
-                        Text(L("United States")).tag("LL")
+                    Picker(L("Region Code"), selection: $model.regionCodeID) {
+                        ForEach(RegionPreset.all) { Text(L($0.title)).tag($0.id) }
                     }
                     if model.regionCodeID != "keep" { Text(L("A device restart may be required.")).font(.caption).foregroundStyle(.secondary) }
                 } footer: {
@@ -197,7 +196,7 @@ struct CategoryView: View {
                     }
                 }
                 Section {
-                    Picker(L("Sales Region"), selection: Binding(get: { model.regionID }, set: model.selectSalesRegion)) {
+                    Picker(L("Sales Region"), selection: $model.regionID) {
                         ForEach(RegionPreset.all) { Text(L($0.title)).tag($0.id) }
                     }
                     if model.regionID != "keep" { Text(L("Restart the device after changing the region.")).font(.caption).foregroundStyle(.secondary) }
