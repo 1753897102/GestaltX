@@ -94,6 +94,7 @@ struct CompatibilityView: View {
         List {
             Section(L("worse_query")) {
                 Text(VersionSupport.range).font(.headline)
+                LabeledContent("iOS 26.x", value: L("Unsupported"))
                 Text(L("Available paths and MobileGestalt presets vary by device and OS build."))
                     .font(.subheadline).foregroundStyle(.secondary)
                 Link(L("Read Upstream Compatibility"), destination: URL(string: "https://github.com/forcequitOS/worse_query")!)

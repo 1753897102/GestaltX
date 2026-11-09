@@ -19,6 +19,7 @@ struct WelcomeView: View {
                 }
                 Section(L("Compatibility")) {
                     Text(VersionSupport.range).fontWeight(.medium)
+                    LabeledContent("iOS 26.x", value: L("Unsupported"))
                     LabeledContent("iOS", value: "\(UIDevice.current.systemVersion) (\(VersionSupport.label))")
                     Text(L("System access and available features vary by OS version, device and signing."))
                         .font(.footnote).foregroundStyle(.secondary)

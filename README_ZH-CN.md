@@ -5,7 +5,7 @@
 <h1 align="center">GestaltX</h1>
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/huami1314/GestaltX)
-[![Platform](https://img.shields.io/badge/iOS-26.0--26.7.2%20%2F%2027.x-black?logo=apple)](#兼容性)
+[![Platform](https://img.shields.io/badge/iOS-27.x-black?logo=apple)](#兼容性)
 [![SwiftUI](https://img.shields.io/badge/Swift-SwiftUI-orange?logo=swift)](https://github.com/huami1314/GestaltX)
 [![License](https://img.shields.io/badge/license-GPLv3-blue)](LICENSE)
 
@@ -33,7 +33,7 @@
 
 ## 兼容性
 
-支持 **iOS / iPadOS 26.0–26.7.2 / 27.x**，基于 [worse_query](https://github.com/forcequitOS/worse_query)。SystemGroup 访问需要 iOS 27，功能可用性因设备与系统而异，同时支持本地 plist 编辑。
+支持 **iOS / iPadOS 27.x**。**iOS / iPadOS 26.x 不支持本机 MobileGestalt 访问。** 基于 [worse_query](https://github.com/forcequitOS/worse_query)。SystemGroup 访问需要 iOS 27，功能可用性因设备与系统而异，同时支持本地 plist 编辑。
 
 签名所用的证书及描述文件必须提供至少一个可用的 App Group。GestaltX 会在运行时读取实际签名中的 App Group，以兼容重签。
 

@@ -5,7 +5,7 @@
 <h1 align="center">GestaltX</h1>
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/huami1314/GestaltX)
-[![Platform](https://img.shields.io/badge/iOS-26.0--26.7.2%20%2F%2027.x-black?logo=apple)](#compatibility)
+[![Platform](https://img.shields.io/badge/iOS-27.x-black?logo=apple)](#compatibility)
 [![SwiftUI](https://img.shields.io/badge/Swift-SwiftUI-orange?logo=swift)](https://github.com/huami1314/GestaltX)
 [![License](https://img.shields.io/badge/license-GPLv3-blue)](LICENSE)
 
@@ -33,7 +33,7 @@ Back up your device before making changes. Incorrect MobileGestalt values can ca
 
 ## Compatibility
 
-Supports **iOS / iPadOS 26.0–26.7.2 / 27.x**. Powered by [worse_query](https://github.com/forcequitOS/worse_query). SystemGroup access requires iOS 27; available features depend on the device and OS. Local plist editing is also supported.
+Supports **iOS / iPadOS 27.x**. **iOS / iPadOS 26.x is not supported for on-device MobileGestalt access.** Powered by [worse_query](https://github.com/forcequitOS/worse_query). SystemGroup access requires iOS 27; available features depend on the device and OS. Local plist editing is also supported.
 
 Signing requires a certificate and provisioning profile with at least one usable App Group. GestaltX detects the signed App Group at runtime.
 
